@@ -1,0 +1,101 @@
+KSAT
+Software Version	1.3.22
+Firmware Version	1.4
+Last setting of the zero point	1/1/0001
+Serial Number	0075
+
+File name	KFJ5_001
+
+MEASUREMENT
+Mode	FallingHead
+Sample rate [s]	Auto
+Crown type	FilterPlateCrown
+Use Synthetic Data	True
+
+PARAMETERS
+OPERATION PARAMETERS
+H_end_abs [cm]	0.5	Hydraulic head difference at stop of measurement
+H_end_rel [-]	0.25	Relative hydraulic head (with respect to initial pressure head) to stop measurement	
+dH_min [cm]	0.1	Minimum hydraulic head difference for two successive readings	
+dH_ini [cm]	1	Required hydraulic head increase between two readings to trigger automatic start of measurement campaign	
+GEOMETRY PARAMETERS
+A_bur1 [cm²]	4.59	Standard burette cross-sectional area
+A_bur2 [cm²]	0.089	Burette extension internal cross-sectional area
+A_sample  [cm²]	41.85	Sample cross-sectional area	
+L_bur [cm]	22.5	Standard burette length	
+L_sample [cm]	5	Height of soil sample	
+L_plate_Bottom [cm]	0.8	Bottom porous plate height	
+L_plate_Top [cm]	0.3	Upper porous plate height	
+EVALUATION PARAMETERS
+T_ref [°C]	12	Reference temperature for K calculations
+K_plate [cm/d]	14000	Porous plate conductivity	
+Use Auto-Offset	True	Use auto offset correction for measured hydraulic head
+Max Auto-Offset [cm]	1	Max. value for auto offset correction
+Trigger Auto-Offset [cm]	1	Hydraulic head change after auto offset correction becomes active
+Start of measurement	6/7/2016 1:20:10 PM
+Test duration	00:00:46
+
+RESULT
+Use auto offset adjustment	True
+Max offset adjustment [cm]	1
+Fitting Parameter a [cm]	NaN
+Fitting Parameter b [s-1]	NaN
+Fitting Parameter c [cm]	
+Fitting Parameter r2 [-]	NaN
+Ks Total [cm/d]	0
+Ks Total [m/s]	0.00E+000
+Ks Soil [cm/d]	NaN
+Ks Soil [m/s]	NaN
+Ks Soil normalized at 12.0 °C [cm/d]	NaN
+Ks Soil normalized at 12.0 °C [m/s]	NaN
+
+DATA
+Date/Time	Runtime [s]	Pressure Head [cm]	Fitting [cm]	Temperature [°C]
+6/7/2016 1:20:10 PM	307	0.00	5.510	-99999.000	27.520
+6/7/2016 1:20:11 PM	415	1.11	5.493	-99999.000	27.520
+6/7/2016 1:20:12 PM	351	2.04	5.479	-99999.000	27.520
+6/7/2016 1:20:14 PM	160	3.85	5.763	-99999.000	27.520
+6/7/2016 1:20:15 PM	65	4.76	5.761	-99999.000	27.520
+6/7/2016 1:20:15 PM	954	5.65	5.760	-99999.000	27.520
+6/7/2016 1:20:16 PM	875	6.57	5.756	-99999.000	27.520
+6/7/2016 1:20:17 PM	748	7.44	5.760	-99999.000	27.520
+6/7/2016 1:20:18 PM	638	8.33	5.759	-99999.000	27.520
+6/7/2016 1:20:19 PM	558	9.25	5.756	-99999.000	27.520
+6/7/2016 1:20:20 PM	463	10.16	5.760	-99999.000	27.520
+6/7/2016 1:20:21 PM	352	11.05	5.759	-99999.000	27.520
+6/7/2016 1:20:23 PM	99	12.79	5.758	-99999.000	27.520
+6/7/2016 1:20:23 PM	988	13.68	5.758	-99999.000	27.520
+6/7/2016 1:20:24 PM	862	14.55	5.755	-99999.000	27.520
+6/7/2016 1:20:25 PM	782	15.48	5.760	-99999.000	27.520
+6/7/2016 1:20:26 PM	796	16.49	5.760	-99999.000	27.520
+6/7/2016 1:20:27 PM	842	17.54	5.755	-99999.000	27.520
+6/7/2016 1:20:28 PM	731	18.42	5.760	-99999.000	27.520
+6/7/2016 1:20:29 PM	776	19.47	5.759	-99999.000	27.520
+6/7/2016 1:20:30 PM	665	20.36	5.755	-99999.000	27.520
+6/7/2016 1:20:31 PM	539	21.23	5.757	-99999.000	27.520
+6/7/2016 1:20:32 PM	459	22.15	5.758	-99999.000	27.520
+6/7/2016 1:20:33 PM	348	23.04	5.755	-99999.000	27.520
+6/7/2016 1:20:35 PM	127	24.82	5.758	-99999.000	27.520
+6/7/2016 1:20:36 PM	16	25.71	5.754	-99999.000	27.520
+6/7/2016 1:20:36 PM	905	26.60	5.757	-99999.000	27.520
+6/7/2016 1:20:37 PM	826	27.52	5.758	-99999.000	27.520
+6/7/2016 1:20:38 PM	715	28.41	5.753	-99999.000	27.520
+6/7/2016 1:20:39 PM	635	29.33	5.757	-99999.000	27.520
+6/7/2016 1:20:40 PM	524	30.22	5.756	-99999.000	27.520
+6/7/2016 1:20:41 PM	445	31.14	5.751	-99999.000	27.520
+6/7/2016 1:20:42 PM	334	32.03	5.753	-99999.000	27.520
+6/7/2016 1:20:43 PM	504	33.20	5.734	-99999.000	27.520
+6/7/2016 1:20:44 PM	393	34.09	5.717	-99999.000	27.520
+6/7/2016 1:20:45 PM	314	35.01	5.755	-99999.000	27.520
+6/7/2016 1:20:47 PM	61	36.75	5.750	-99999.000	27.520
+6/7/2016 1:20:47 PM	950	37.64	5.755	-99999.000	27.520
+6/7/2016 1:20:48 PM	995	38.69	5.754	-99999.000	27.520
+6/7/2016 1:20:49 PM	884	39.58	5.750	-99999.000	27.520
+6/7/2016 1:20:50 PM	805	40.50	5.752	-99999.000	27.520
+6/7/2016 1:20:51 PM	694	41.39	5.753	-99999.000	27.520
+6/7/2016 1:20:52 PM	739	42.43	5.750	-99999.000	27.520
+6/7/2016 1:20:53 PM	628	43.32	5.752	-99999.000	27.520
+6/7/2016 1:20:54 PM	549	44.24	5.753	-99999.000	27.520
+6/7/2016 1:20:55 PM	438	45.13	5.745	-99999.000	27.520
+6/7/2016 1:20:56 PM	343	0.00	5.723	-99999.000	27.520
+

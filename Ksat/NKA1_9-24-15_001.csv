@@ -1,0 +1,66 @@
+KSAT
+Software Version	1.3.22
+Firmware Version	1.4
+Last setting of the zero point	1/1/0001
+Serial Number	0075
+
+File name	NKA1_9-24-15_001
+
+MEASUREMENT
+Mode	FallingHead
+Sample rate [s]	Auto
+Crown type	FilterPlateCrown
+Use Synthetic Data	True
+
+PARAMETERS
+OPERATION PARAMETERS
+H_end_abs [cm]	0.5	Hydraulic head difference at stop of measurement
+H_end_rel [-]	0.25	Relative hydraulic head (with respect to initial pressure head) to stop measurement	
+dH_min [cm]	0.1	Minimum hydraulic head difference for two successive readings	
+dH_ini [cm]	1	Required hydraulic head increase between two readings to trigger automatic start of measurement campaign	
+GEOMETRY PARAMETERS
+A_bur1 [cm²]	4.59	Standard burette cross-sectional area
+A_bur2 [cm²]	0.089	Burette extension internal cross-sectional area
+A_sample  [cm²]	41.85	Sample cross-sectional area	
+L_bur [cm]	22.5	Standard burette length	
+L_sample [cm]	5	Height of soil sample	
+L_plate_Bottom [cm]	0.8	Bottom porous plate height	
+L_plate_Top [cm]	0.3	Upper porous plate height	
+EVALUATION PARAMETERS
+T_ref [°C]	12	Reference temperature for K calculations
+K_plate [cm/d]	14000	Porous plate conductivity	
+Use Auto-Offset	True	Use auto offset correction for measured hydraulic head
+Max Auto-Offset [cm]	1	Max. value for auto offset correction
+Trigger Auto-Offset [cm]	1	Hydraulic head change after auto offset correction becomes active
+Start of measurement	10/15/2015 2:47:27 PM
+Test duration	00:00:15
+
+RESULT
+Use auto offset adjustment	True
+Max offset adjustment [cm]	1
+Fitting Parameter a [cm]	3.09
+Fitting Parameter b [s-1]	-2.56E-01
+Fitting Parameter c [cm]	-.7
+Fitting Parameter r2 [-]	0.9987
+Ks Total [cm/d]	14790
+Ks Total [m/s]	1.72E-03
+Ks Soil [cm/d]	14980
+Ks Soil [m/s]	1.74E-03
+Ks Soil normalized at 12.0 °C [cm/d]	11940
+Ks Soil normalized at 12.0 °C [m/s]	1.39E-03
+
+DATA
+Date/Time	Runtime [s]	Pressure Head [cm]	Fitting [cm]	Temperature [°C]
+10/15/2015 2:47:27 PM	683	-4.73	0.269	-99999.000	20.530
+10/15/2015 2:47:28 PM	962	-3.45	0.266	-99999.000	20.530
+10/15/2015 2:47:30 PM	163	-2.25	0.264	-99999.000	20.580
+10/15/2015 2:47:31 PM	240	-1.17	4.398	-99999.000	20.580
+10/15/2015 2:47:32 PM	410	0.00	3.790	3.790	20.580
+10/15/2015 2:47:34 PM	734	2.32	2.447	2.405	20.580
+10/15/2015 2:47:36 PM	122	3.71	1.983	1.895	20.580
+10/15/2015 2:47:37 PM	542	5.13	1.519	1.531	20.580
+10/15/2015 2:47:38 PM	962	6.55	1.284	1.278	20.580
+10/15/2015 2:47:40 PM	397	7.99	1.077	1.100	20.580
+10/15/2015 2:47:41 PM	848	9.44	0.976	0.976	20.580
+10/15/2015 2:47:43 PM	610	11.20	0.864	-99999.000	20.580
+

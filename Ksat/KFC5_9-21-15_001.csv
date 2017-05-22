@@ -1,0 +1,79 @@
+KSAT
+Software Version	1.3.22
+Firmware Version	1.4
+Last setting of the zero point	1/1/0001
+Serial Number	0075
+
+File name	KFC5_9-21-15_001
+
+MEASUREMENT
+Mode	FallingHead
+Sample rate [s]	Auto
+Crown type	FilterPlateCrown
+Use Synthetic Data	True
+
+PARAMETERS
+OPERATION PARAMETERS
+H_end_abs [cm]	0.5	Hydraulic head difference at stop of measurement
+H_end_rel [-]	0.25	Relative hydraulic head (with respect to initial pressure head) to stop measurement	
+dH_min [cm]	0.1	Minimum hydraulic head difference for two successive readings	
+dH_ini [cm]	1	Required hydraulic head increase between two readings to trigger automatic start of measurement campaign	
+GEOMETRY PARAMETERS
+A_bur1 [cm²]	4.59	Standard burette cross-sectional area
+A_bur2 [cm²]	0.089	Burette extension internal cross-sectional area
+A_sample  [cm²]	41.85	Sample cross-sectional area	
+L_bur [cm]	22.5	Standard burette length	
+L_sample [cm]	5	Height of soil sample	
+L_plate_Bottom [cm]	0.8	Bottom porous plate height	
+L_plate_Top [cm]	0.3	Upper porous plate height	
+EVALUATION PARAMETERS
+T_ref [°C]	12	Reference temperature for K calculations
+K_plate [cm/d]	14000	Porous plate conductivity	
+Use Auto-Offset	True	Use auto offset correction for measured hydraulic head
+Max Auto-Offset [cm]	1	Max. value for auto offset correction
+Trigger Auto-Offset [cm]	1	Hydraulic head change after auto offset correction becomes active
+Start of measurement	10/11/2015 6:28:10 PM
+Test duration	00:03:45
+
+RESULT
+Use auto offset adjustment	True
+Max offset adjustment [cm]	1
+Fitting Parameter a [cm]	2.68
+Fitting Parameter b [s-1]	-7.63E-03
+Fitting Parameter c [cm]	-.3
+Fitting Parameter r2 [-]	0.9676
+Ks Total [cm/d]	441
+Ks Total [m/s]	5.13E-05
+Ks Soil [cm/d]	364
+Ks Soil [m/s]	4.23E-05
+Ks Soil normalized at 12.0 °C [cm/d]	285
+Ks Soil normalized at 12.0 °C [m/s]	3.32E-05
+
+DATA
+Date/Time	Runtime [s]	Pressure Head [cm]	Fitting [cm]	Temperature [°C]
+10/11/2015 6:28:10 PM	854	-4.20	0.265	-99999.000	21.210
+10/11/2015 6:28:11 PM	868	-3.18	0.264	-99999.000	21.210
+10/11/2015 6:28:12 PM	882	-2.17	0.263	-99999.000	21.210
+10/11/2015 6:28:13 PM	974	-1.08	0.265	-99999.000	21.210
+10/11/2015 6:28:15 PM	51	0.00	2.778	2.778	21.210
+10/11/2015 6:29:03 PM	723	48.67	2.670	1.947	21.220
+10/11/2015 6:29:07 PM	670	52.62	2.550	1.892	21.220
+10/11/2015 6:29:11 PM	663	56.61	2.437	1.838	21.220
+10/11/2015 6:29:15 PM	672	60.62	2.329	1.786	21.220
+10/11/2015 6:29:19 PM	728	64.68	2.218	1.735	21.220
+10/11/2015 6:29:24 PM	549	69.50	2.105	1.676	21.220
+10/11/2015 6:29:29 PM	338	74.29	1.999	1.619	21.220
+10/11/2015 6:29:34 PM	985	79.93	1.870	1.555	21.230
+10/11/2015 6:29:40 PM	695	85.64	1.765	1.493	21.230
+10/11/2015 6:29:46 PM	311	91.26	1.662	1.435	21.230
+10/11/2015 6:29:52 PM	847	97.80	1.557	1.370	21.230
+10/11/2015 6:29:59 PM	384	104.33	1.457	1.308	21.230
+10/11/2015 6:30:05 PM	951	110.90	1.351	1.249	21.230
+10/11/2015 6:30:14 PM	188	119.14	1.248	1.179	21.230
+10/11/2015 6:30:23 PM	330	128.28	1.143	1.106	21.230
+10/11/2015 6:30:34 PM	218	139.17	1.036	1.026	21.230
+10/11/2015 6:30:46 PM	761	151.71	0.935	0.941	21.230
+10/11/2015 6:31:02 PM	860	167.81	0.831	0.844	21.230
+10/11/2015 6:31:24 PM	872	189.82	0.729	0.729	21.240
+10/11/2015 6:31:56 PM	290	221.24	0.628	-99999.000	21.240
+

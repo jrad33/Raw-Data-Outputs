@@ -1,0 +1,97 @@
+KSAT
+Software Version	1.3.22
+Firmware Version	1.4
+Last setting of the zero point	1/1/0001
+Serial Number	0075
+
+File name	NKF6_9-24-15_002
+
+MEASUREMENT
+Mode	FallingHead
+Sample rate [s]	Auto
+Crown type	FilterPlateCrown
+Use Synthetic Data	True
+
+PARAMETERS
+OPERATION PARAMETERS
+H_end_abs [cm]	0.5	Hydraulic head difference at stop of measurement
+H_end_rel [-]	0.25	Relative hydraulic head (with respect to initial pressure head) to stop measurement	
+dH_min [cm]	0.1	Minimum hydraulic head difference for two successive readings	
+dH_ini [cm]	1	Required hydraulic head increase between two readings to trigger automatic start of measurement campaign	
+GEOMETRY PARAMETERS
+A_bur1 [cm²]	4.59	Standard burette cross-sectional area
+A_bur2 [cm²]	0.089	Burette extension internal cross-sectional area
+A_sample  [cm²]	41.85	Sample cross-sectional area	
+L_bur [cm]	22.5	Standard burette length	
+L_sample [cm]	5	Height of soil sample	
+L_plate_Bottom [cm]	0.8	Bottom porous plate height	
+L_plate_Top [cm]	0.3	Upper porous plate height	
+EVALUATION PARAMETERS
+T_ref [°C]	12	Reference temperature for K calculations
+K_plate [cm/d]	14000	Porous plate conductivity	
+Use Auto-Offset	True	Use auto offset correction for measured hydraulic head
+Max Auto-Offset [cm]	1	Max. value for auto offset correction
+Trigger Auto-Offset [cm]	1	Hydraulic head change after auto offset correction becomes active
+Start of measurement	10/19/2015 8:32:59 PM
+Test duration	00:10:24
+
+RESULT
+Use auto offset adjustment	True
+Max offset adjustment [cm]	1
+Fitting Parameter a [cm]	5.73
+Fitting Parameter b [s-1]	-1.99E-03
+Fitting Parameter c [cm]	.4
+Fitting Parameter r2 [-]	0.9998
+Ks Total [cm/d]	115
+Ks Total [m/s]	1.34E-05
+Ks Soil [cm/d]	94
+Ks Soil [m/s]	1.10E-05
+Ks Soil normalized at 12.0 °C [cm/d]	73
+Ks Soil normalized at 12.0 °C [m/s]	8.51E-06
+
+DATA
+Date/Time	Runtime [s]	Pressure Head [cm]	Fitting [cm]	Temperature [°C]
+10/19/2015 8:32:59 PM	940	-3.51	-0.142	-99999.000	21.770
+10/19/2015 8:33:01 PM	188	-2.26	-0.161	-99999.000	21.760
+10/19/2015 8:33:02 PM	405	-1.04	1.036	-99999.000	21.760
+10/19/2015 8:33:03 PM	450	0.00	5.325	5.325	21.760
+10/19/2015 8:33:07 PM	537	4.09	5.203	5.279	21.760
+10/19/2015 8:33:13 PM	262	9.81	5.101	5.214	21.770
+10/19/2015 8:33:20 PM	672	17.22	4.998	5.132	21.770
+10/19/2015 8:33:29 PM	798	26.35	4.892	5.032	21.770
+10/19/2015 8:33:39 PM	829	36.38	4.791	4.925	21.770
+10/19/2015 8:33:49 PM	985	46.54	4.689	4.818	21.780
+10/19/2015 8:34:00 PM	889	57.44	4.582	4.706	21.780
+10/19/2015 8:34:12 PM	714	69.26	4.474	4.588	21.780
+10/19/2015 8:34:23 PM	571	80.12	4.371	4.481	21.780
+10/19/2015 8:34:35 PM	350	91.90	4.265	4.368	21.780
+10/19/2015 8:34:47 PM	128	103.68	4.164	4.257	21.780
+10/19/2015 8:34:58 PM	874	115.42	4.061	4.150	21.780
+10/19/2015 8:35:11 PM	542	128.09	3.954	4.036	21.780
+10/19/2015 8:35:24 PM	178	140.73	3.850	3.926	21.770
+10/19/2015 8:35:37 PM	110	153.66	3.748	3.816	21.770
+10/19/2015 8:35:50 PM	573	167.12	3.639	3.705	21.770
+10/19/2015 8:36:04 PM	909	181.46	3.530	3.589	21.770
+10/19/2015 8:36:19 PM	199	195.75	3.423	3.477	21.780
+10/19/2015 8:36:33 PM	473	210.02	3.322	3.369	21.780
+10/19/2015 8:36:47 PM	825	224.38	3.221	3.263	21.780
+10/19/2015 8:37:02 PM	146	238.70	3.119	3.160	21.780
+10/19/2015 8:37:17 PM	340	253.89	3.015	3.054	21.780
+10/19/2015 8:37:33 PM	377	269.93	2.912	2.945	21.780
+10/19/2015 8:37:49 PM	570	286.12	2.809	2.839	21.780
+10/19/2015 8:38:06 PM	511	303.06	2.704	2.732	21.780
+10/19/2015 8:38:24 PM	202	320.75	2.599	2.623	21.780
+10/19/2015 8:38:42 PM	797	339.35	2.495	2.513	21.780
+10/19/2015 8:39:01 PM	439	357.99	2.390	2.407	21.780
+10/19/2015 8:39:18 PM	318	374.87	2.287	2.314	21.780
+10/19/2015 8:39:38 PM	661	395.21	2.182	2.207	21.780
+10/19/2015 8:39:59 PM	846	416.40	2.077	2.099	21.790
+10/19/2015 8:40:21 PM	31	437.58	1.975	1.996	21.790
+10/19/2015 8:40:43 PM	869	460.42	1.874	1.889	21.790
+10/19/2015 8:41:07 PM	675	484.23	1.770	1.783	21.780
+10/19/2015 8:41:32 PM	338	508.89	1.670	1.679	21.800
+10/19/2015 8:41:57 PM	797	534.35	1.569	1.576	21.780
+10/19/2015 8:42:25 PM	831	562.38	1.467	1.469	21.780
+10/19/2015 8:42:53 PM	958	590.51	1.367	1.367	21.780
+10/19/2015 8:43:24 PM	612	621.16	1.267	-99999.000	21.790
+

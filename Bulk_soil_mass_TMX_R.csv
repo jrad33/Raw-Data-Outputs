@@ -1,0 +1,97 @@
+Sample.ID,Interval,Texture,Stage,Combo,TMX.ng
+nk-v1-1,0-30 cm,Sand,V1,Sandy-V1,2124644.696
+nk-v1-2,0-30 cm,Sand,V1,Sandy-V1,912583.634
+nk-v1-3,0-30 cm,Sand,V1,Sandy-V1,769457.9571
+nk-v1-4,0-30 cm,Sand,V1,Sandy-V1,837226.3461
+nk-v3-1,0-30 cm,Sand,V3,Sandy-V3,466996.3493
+nk-v3-2,0-30 cm,Sand,V3,Sandy-V3,319198.3719
+nk-v3-3,0-30 cm,Sand,V3,Sandy-V3,293694.5686
+nk-v3-4,0-30 cm,Sand,V3,Sandy-V3,211829.4241
+nk-v5-2,0-30 cm,Sand,V5,Sandy-V5,288051.511
+nk-v5-3,0-30 cm,Sand,V5,Sandy-V5,365939.7805
+nk-v5-4,0-30 cm,Sand,V5,Sandy-V5,397470.5217
+nk-v5-5,0-30 cm,Sand,V5,Sandy-V5,317691.7249
+nk-v5-ctr-1,0-30 cm,Sand,V5.Ctr,Sandy-V5-Ctr,389051.2012
+nk-v5-ctr-2,0-30 cm,Sand,V5.Ctr,Sandy-V5-Ctr,431089.856
+nk-v5-ctr-3,0-30 cm,Sand,V5.Ctr,Sandy-V5-Ctr,424407.9246
+nk-v5-ctr-4,0-30 cm,Sand,V5.Ctr,Sandy-V5-Ctr,526071.6134
+nk-v5-ctr-5,0-30 cm,Sand,V5.Ctr,Sandy-V5-Ctr,52993.40799
+kf-v1-1,0-30 cm,Clay,V1,Clay-V1,280981.3088
+kf-v1-2,0-30 cm,Clay,V1,Clay-V1,452920.1789
+kf-v1-3,0-30 cm,Clay,V1,Clay-V1,281893.2274
+kf-v1-4,0-30 cm,Clay,V1,Clay-V1,1498346.836
+kf-v3-2,0-30 cm,Clay,V3,Clay-V3,180256.2025
+kf-v3-3,0-30 cm,Clay,V3,Clay-V3,181213.3561
+kf-v3-4,0-30 cm,Clay,V3,Clay-V3,240138.863
+kf-v5-2,0-30 cm,Clay,V5,Clay-V5,142178.3494
+kf-v5-3,0-30 cm,Clay,V5,Clay-V5,132659.1274
+kf-v5-4,0-30 cm,Clay,V5,Clay-V5,152394.5094
+kf-v5-5,0-30 cm,Clay,V5,Clay-V5,155266.257
+kf-v5-ctr-1,0-30 cm,Clay,V5.Ctr,Clay-V5-Ctr,298445.1999
+kf-v5-ctr-2,0-30 cm,Clay,V5.Ctr,Clay-V5-Ctr,284097.0789
+kf-v5-ctr-4,0-30 cm,Clay,V5.Ctr,Clay-V5-Ctr,83678.19518
+kf-v5-ctr-5  ,0-30 cm,Clay,V5.Ctr,Clay-V5-Ctr,311610.4733
+nk-v1-1,30-45 cm,Sand,V1,Sandy-V1,7151.491863
+nk-v1-2,30-45 cm,Sand,V1,Sandy-V1,5850.833914
+nk-v1-3,30-45 cm,Sand,V1,Sandy-V1,5766.992062
+nk-v1-4,30-45 cm,Sand,V1,Sandy-V1,4667.322287
+nk-v3-1,30-45 cm,Sand,V3,Sandy-V3,770.8739117
+nk-v3-2,30-45 cm,Sand,V3,Sandy-V3,869.9361767
+nk-v3-3,30-45 cm,Sand,V3,Sandy-V3,1040.186637
+nk-v3-4,30-45 cm,Sand,V3,Sandy-V3,1132.499561
+nk-v5-2,30-45 cm,Sand,V5,Sandy-V5,83748.32128
+nk-v5-3,30-45 cm,Sand,V5,Sandy-V5,69078.38938
+nk-v5-4,30-45 cm,Sand,V5,Sandy-V5,62502.31695
+nk-v5-5,30-45 cm,Sand,V5,Sandy-V5,59909.60775
+nk-v5-ctr-1,30-45 cm,Sand,V5.Ctr,Sandy-V5-Ctr,6467.30637
+nk-v5-ctr-2,30-45 cm,Sand,V5.Ctr,Sandy-V5-Ctr,34782.70737
+nk-v5-ctr-3,30-45 cm,Sand,V5.Ctr,Sandy-V5-Ctr,12519.76805
+nk-v5-ctr-4,30-45 cm,Sand,V5.Ctr,Sandy-V5-Ctr,12186.75482
+nk-v5-ctr-5,30-45 cm,Sand,V5.Ctr,Sandy-V5-Ctr,94118.8382
+nk-v1-1,30-45 cm,Clay,V1,Clay-V1,3364.729945
+nk-v1-2,30-45 cm,Clay,V1,Clay-V1,2928.826909
+nk-v1-3,30-45 cm,Clay,V1,Clay-V1,2150.360078
+nk-v1-4,30-45 cm,Clay,V1,Clay-V1,3609.717613
+kf-v3-2,30-45 cm,Clay,V3,Clay-V3,1104.371907
+kf-v3-3,30-45 cm,Clay,V3,Clay-V3,1194.833564
+kf-v3-4,30-45 cm,Clay,V3,Clay-V3,1511.300599
+kf-v5-1 ,30-45 cm,Clay,V5,Clay-V5,42363.33417
+kf-v5-2,30-45 cm,Clay,V5,Clay-V5,24793.66386
+kf-v5-3,30-45 cm,Clay,V5,Clay-V5,33457.47828
+kf-v5-4,30-45 cm,Clay,V5,Clay-V5,37956.60423
+kf-v5-ctr-1 ,30-45 cm,Clay,V5.Ctr,Clay-V5-Ctr,24015.79957
+kf-v5-ctr-2,30-45 cm,Clay,V5.Ctr,Clay-V5-Ctr,6706.5887
+kf-v5-ctr-4,30-45 cm,Clay,V5.Ctr,Clay-V5-Ctr,12737.85477
+kf-v5-ctr-5  ,30-45 cm,Clay,V5.Ctr,Clay-V5-Ctr,27798.32978
+nk-v1-1,45-60 cm,Sand,V1,Sandy-V1,2891.027333
+nk-v1-2,45-60 cm,Sand,V1,Sandy-V1,1813.325739
+nk-v1-3,45-60 cm,Sand,V1,Sandy-V1,2847.241542
+nk-v1-4,45-60 cm,Sand,V1,Sandy-V1,2155.23566
+nk-v3-1,45-60 cm,Sand,V3,Sandy-V3,1594.31162
+nk-v3-2,45-60 cm,Sand,V3,Sandy-V3,1275.330878
+nk-v3-3,45-60 cm,Sand,V3,Sandy-V3,1810.033005
+nk-v3-4,45-60 cm,Sand,V3,Sandy-V3,1319.188811
+nk-v5-2,45-60 cm,Sand,V5,Sandy-V5,2200.235116
+nk-v5-3,45-60 cm,Sand,V5,Sandy-V5,2960.035547
+nk-v5-4,45-60 cm,Sand,V5,Sandy-V5,1048.525019
+nk-v5-5,45-60 cm,Sand,V5,Sandy-V5,1975.495335
+nk-v5-ctr-1,45-60 cm,Sand,V5.Ctr,Sandy-V5-Ctr,659.4811002
+nk-v5-ctr-2,45-60 cm,Sand,V5.Ctr,Sandy-V5-Ctr,713.0084724
+nk-v5-ctr-3,45-60 cm,Sand,V5.Ctr,Sandy-V5-Ctr,2245.07016
+nk-v5-ctr-4,45-60 cm,Sand,V5.Ctr,Sandy-V5-Ctr,8121.828539
+nk-v5-ctr-5,45-60 cm,Sand,V5.Ctr,Sandy-V5-Ctr,5699.883728
+kf-v1-1,45-60 cm,Clay,V1,Clay-V1,2198.831079
+kf-v1-2,45-60 cm,Clay,V1,Clay-V1,1588.68559
+kf-v1-3,45-60 cm,Clay,V1,Clay-V1,1366.901037
+kf-v1-4,45-60 cm,Clay,V1,Clay-V1,1479.982603
+kf-v3-2,45-60 cm,Clay,V3,Clay-V3,849.990714
+kf-v3-3,45-60 cm,Clay,V3,Clay-V3,1088.242622
+kf-v3-4,45-60 cm,Clay,V3,Clay-V3,809.075913
+kf-v5-1  ,45-60 cm,Clay,V5,Clay-V5,15832.67327
+kf-v5-2,45-60 cm,Clay,V5,Clay-V5,4193.800672
+kf-v5-4 ,45-60 cm,Clay,V5,Clay-V5,4818.240357
+kf-v5-5,45-60 cm,Clay,V5,Clay-V5,15969.27239
+kf-v5-ctr-1,45-60 cm,Clay,V5.Ctr,Clay-V5-Ctr,12283.75886
+kf-v5-ctr-2,45-60 cm,Clay,V5.Ctr,Clay-V5-Ctr,6755.098441
+kf-v5-ctr-4 ,45-60 cm,Clay,V5.Ctr,Clay-V5-Ctr,14625.95768
+kf-v5-ctr-5  ,45-60 cm,Clay,V5.Ctr,Clay-V5-Ctr,4793.868322
