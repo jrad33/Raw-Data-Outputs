@@ -442,11 +442,66 @@ lm_df_2
 
 
 
+##################################### make example regression plot for SI in EST###################
+
+##choose a good column
 
 
 
 
+column.2_1 <- Column.infiltration[Column.infiltration$Column.ID == "2_1", ]
 
+plot(column.2_1$I_sqrt.t_ratio ~ ##good
+       column.2_1$sqrt.t)
+abline(lm(column.2_1$I_sqrt.t_ratio ~ ##good
+            column.2_1$sqrt.t))
+
+ceof <- coef(lm(column.3_1.fix$I_sqrt.t_ratio ~
+                  column.3_1.fix$sqrt.t))
+
+
+###4_3 looks good!
+
+
+column.4_3 <- Column.infiltration[Column.infiltration$Column.ID == "4_3", ]
+
+
+
+plot(column.4_3$I_sqrt.t_ratio ~ ##good
+       column.4_3$sqrt.t)
+abline(lm(column.4_3$I_sqrt.t_ratio ~ ##good
+            column.4_3$sqrt.t))
+
+dev.off()
+
+
+
+
+pdf("C:/Users/Jesse/Desktop/Neonicotinoids_15/Data/Column-Study/Raw-Data-Outputs/example_inf_plot.pdf")
+
+par(mar = c(5.1,6,4.1,4))
+
+plot(x = NULL, y = NULL, axes = FALSE, xlab = expression(t^{0.5} ~ (hr^{0.5})),
+     
+     ylab = expression(I/t^{0.5} ~ (cm ~ hr^{-0.5})), ###blank plot with title and range specified
+     
+     xlim = c(0, 0.7), 
+     
+     ylim = c(0, 13), cex.lab = 1.5)
+
+points(column.4_3$I_sqrt.t_ratio ~ ##good
+         column.4_3$sqrt.t, pch = 21, col = "black", cex = 2, lwd = 2 )
+
+abline(lm(column.4_3$I_sqrt.t_ratio ~ ##good
+            column.4_3$sqrt.t, lwd = 2))
+
+axis(1, lwd = 2)
+
+axis(2, lwd = 2)
+
+box(col = "black", lwd = 2)
+
+dev.off()
 
 
 
