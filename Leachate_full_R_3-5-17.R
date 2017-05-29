@@ -1006,11 +1006,22 @@ small.columns.stats.mass$Combo <- paste(small.columns.stats.mass$Texture,
 small.columns.stats.mass ##good
 
 
+##make or insert dataframe that has "stairstep" rainfall
+
+
+cum.rain <- read.csv("C:/Users/Jesse/Desktop/Neonicotinoids_15/Data/Column-Study/Raw-Data-Outputs/cum_rain.csv")
+attach(cum.rain)
+
+
+
+
 
 ######done with preplot analysis
 
 
 ######now start plotting!!!!!!!!
+
+
 
 
 
@@ -1023,13 +1034,13 @@ cleanup <- theme(panel.grid.major = element_blank(),
 
 tall.columns.no.SS.stats
 
-Leach.tall.TMX.ppb.inf <- ggplot(tall.columns.no.SS.stats, aes(x = Time.day, y= Cum.inf.cm,
+Leach.tall.TMX.ppb.inf <- ggplot(cum.rain, aes(x = Day, y = Cumulative.rainfall.cm,
                                                                
                                                                ymin = 0,
                                                                
-                                                               ymax = Cum.inf.cm,
+                                                               ymax = Cumulative.rainfall.cm,
                                                                
-                                                               xmax = Time.day)) +
+                                                               xmax = Day)) +
                                  geom_line(size = 1, linetype = 2) +
                                  
                                  scale_y_continuous(limits=c(25,0),
@@ -1191,13 +1202,13 @@ ggsave(file = "C:/Users/Jesse/Desktop/Neonicotinoids_15/Data/Column-Study/Raw-Da
 #####TMX ppb small columns*************************************************
 small.columns.stats
 
-Leach.small.TMX.ppb.inf <- ggplot(small.columns.stats, aes(x = Time.day, y= Cum.inf.cm,
-                                                               
-                                                               ymin = 0,
-                                                               
-                                                               ymax = Cum.inf.cm,
-                                                               
-                                                               xmax = Time.day)) +
+Leach.small.TMX.ppb.inf <- ggplot(cum.rain, aes(x = Day, y = Cumulative.rainfall.cm,
+                                                
+                                                ymin = 0,
+                                                
+                                                ymax = Cumulative.rainfall.cm,
+                                                
+                                                xmax = Day)) +
   geom_line(size = 1, linetype = 2) +
   
   scale_y_continuous(limits=c(25,0),
@@ -1376,13 +1387,13 @@ structure.study.stats
 
 
 
-structure.study.TMX.ppb.inf <- ggplot(structure.study.stats, aes(x = Time.day, y= Cum.inf.cm,
-                                                           
-                                                           ymin = 0,
-                                                           
-                                                           ymax = Cum.inf.cm,
-                                                           
-                                                           xmax = Time.day)) +
+structure.study.TMX.ppb.inf <- ggplot(cum.rain, aes(x = Day, y = Cumulative.rainfall.cm,
+                                                    
+                                                    ymin = 0,
+                                                    
+                                                    ymax = Cumulative.rainfall.cm,
+                                                    
+                                                    xmax = Day)) +
   geom_line(size = 1, linetype = 2) +
   
   scale_y_continuous(limits=c(25,0),
@@ -1707,19 +1718,19 @@ structure.study.TMX.mass.graph <- ggplot(structure.study.stats.mass, aes(cum.Lea
                      
                      values = c(1, 19),
                      
-                     labels = c("Untructured Clay", "Structured Clay")) +
+                     labels = c("Unstructured Clay", "Structured Clay")) +
   
   scale_color_manual(name = "",
                      
                      values = c('black', "black"), 
                      
-                     labels = c("Untructured Clay", "Structured Clay")) +
+                     labels = c("Unstructured Clay", "Structured Clay")) +
   
   scale_size_manual(name = "",
                     
                     values = c(3.5, 3.5),
                     
-                    labels = c("Untructured Clay", "Structured Clay")) +
+                    labels = c("Unstructured Clay", "Structured Clay")) +
   
   geom_text(aes(label = Letters, y = cum.TMX.micrg, fontface = "italic"),
             
@@ -1932,13 +1943,13 @@ column.20.pic.grob <- rasterGrob(column.20.pic, interpolate = T)
 ###########now arrange all figures in the grid???***************************************
 
 
-Leach.tall.TMX.ppb.inf.grid <- ggplot(tall.columns.no.SS.stats, aes(x = Time.day, y= Cum.inf.cm,
-                                                               
-                                                               ymin = 0,
-                                                               
-                                                               ymax = Cum.inf.cm,
-                                                               
-                                                               xmax = Time.day)) +
+Leach.tall.TMX.ppb.inf.grid <- ggplot(cum.rain, aes(x = Day, y = Cumulative.rainfall.cm,
+                                                    
+                                                    ymin = 0,
+                                                    
+                                                    ymax = Cumulative.rainfall.cm,
+                                                    
+                                                    xmax = Day)) +
   geom_line(size = 1, linetype = 2) +
   
   scale_y_continuous(limits=c(25,0),
@@ -1960,7 +1971,7 @@ Leach.tall.TMX.ppb.inf.grid <- ggplot(tall.columns.no.SS.stats, aes(x = Time.day
   
   ylab("Rain (cm)") +
   
-  theme(axis.title.y = element_text(vjust = 1.5, hjust = 2.25))
+  theme(axis.title.y = element_text(vjust = 1.5, hjust = 2.5))
 
 
 
@@ -2087,13 +2098,13 @@ Leach.tall.TMX.ppb.graph.comb.grid
 #####TMX ppb small columns*************************************************
 small.columns.stats
 
-Leach.small.TMX.ppb.inf.grid <- ggplot(small.columns.stats, aes(x = Time.day, y= Cum.inf.cm,
-                                                           
-                                                           ymin = 0,
-                                                           
-                                                           ymax = Cum.inf.cm,
-                                                           
-                                                           xmax = Time.day)) +
+Leach.small.TMX.ppb.inf.grid <- ggplot(cum.rain, aes(x = Day, y = Cumulative.rainfall.cm,
+                                                     
+                                                     ymin = 0,
+                                                     
+                                                     ymax = Cumulative.rainfall.cm,
+                                                     
+                                                     xmax = Day)) +
   geom_line(size = 1, linetype = 2) +
   
   scale_y_continuous(limits=c(25,0),
@@ -2261,13 +2272,13 @@ structure.study.stats
 
 
 
-structure.study.TMX.ppb.inf.grid <- ggplot(structure.study.stats, aes(x = Time.day, y= Cum.inf.cm,
-                                                                 
-                                                                 ymin = 0,
-                                                                 
-                                                                 ymax = Cum.inf.cm,
-                                                                 
-                                                                 xmax = Time.day)) +
+structure.study.TMX.ppb.inf.grid <- ggplot(cum.rain, aes(x = Day, y = Cumulative.rainfall.cm,
+                                                         
+                                                         ymin = 0,
+                                                         
+                                                         ymax = Cumulative.rainfall.cm,
+                                                         
+                                                         xmax = Day)) +
   geom_line(size = 1, linetype = 2) +
   
   scale_y_continuous(limits=c(25,0),
@@ -2836,7 +2847,6 @@ dev.off()
 
 TMX.mass.and.conc.Leachate.grid
 
-?theme
 
 
 
@@ -2872,50 +2882,4 @@ TMX.mass.and.conc.Leachate.grid
 
 
 
-
-####just make raw cum. rainfall figure
-
-Rainfall.cum <- ggplot(tall.columns.no.SS.stats, aes(x = Time.day, y= Cum.inf.cm,
-                                                                    
-                                                                    ymin = 0,
-                                                                    
-                                                                    ymax = Cum.inf.cm,
-                                                                    
-                                                                    xmax = Time.day)) +
-  geom_line(size = 1, linetype = 2) +
-  
-  scale_y_continuous(limits=c(25,0),
-                     
-                     expand=c(0,0), trans="reverse", position = "right", breaks = c(0,10,20)) +
-  theme_classic() +
-  
-  theme(plot.margin = unit(c(7,5,5,5), units="points"),
-        
-        axis.title.y = element_text(vjust = 0.3, size = 20, face = "bold"),
-        
-        axis.text.y = element_text(size = 20),
-        
-        axis.text.x = element_text(size = 20),
-        
-        axis.title.x = element_text(vjust = 0.3, size = 20, face = "bold"),
-        
-        panel.border = element_rect(color = "black",
-                                    
-                                    fill = NA, size = 3),
-        
-        axis.ticks.y = element_line(size = 1, color = "black")) +
-  
-  ylab("Rain (cm)") +
-  
-  xlab("Time (d)")
-  
- # theme(axis.title.y = element_text(vjust = 1.5, hjust = 2.25))
-
-
-
-
-
-pdf("C:/Users/Jesse/Desktop/Neonicotinoids_15/Data/Column-Study/Raw-Data-Outputs/rain.cum.pdf")
-Rainfall.cum
-dev.off()
 

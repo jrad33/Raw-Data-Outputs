@@ -1596,7 +1596,7 @@ small.columns.stats.ET ##good
 
 
 
-######done with preplot analysis
+
 
 
 #####attach column pics
@@ -1618,6 +1618,11 @@ column.20.pic.grob <- rasterGrob(column.20.pic, interpolate = T)
 
 
 
+##make or insert dataframe that has "stairstep" rainfall
+
+
+cum.rain <- read.csv("C:/Users/Jesse/Desktop/Neonicotinoids_15/Data/Column-Study/Raw-Data-Outputs/cum_rain.csv")
+attach(cum.rain)
 
 
 
@@ -1626,7 +1631,7 @@ column.20.pic.grob <- rasterGrob(column.20.pic, interpolate = T)
 
 
 
-
+######done with preplot analysis
 
 ######now start plotting!!!!!!!!
 
@@ -1636,7 +1641,7 @@ column.20.pic.grob <- rasterGrob(column.20.pic, interpolate = T)
 
 
 
-##actually, shoulf probably convert ET to mm to be consistent with rainfall on iverse y
+##actually, shoulf probably convert ET to cm to be consistent with rainfall on iverse y
 
 ##tall columns
 tall.columns.no.SS.stats.ET$ET.cum.cm <- tall.columns.no.SS.stats.ET$ET.cum.mm/10
@@ -1657,12 +1662,241 @@ small.columns.stats.ET$se.cm <- small.columns.stats.ET$se/10
 
 
 
-#####cleanup themes for ggplot
+
+
+####lets add in leachate volume as cm also... volume (mL)/area(cm)
+
+###remember that: se <- SE for ET (mm)
+#                 se1 <- SE for cumulative leachate volume (mL)
+#                 se.cm <- SE for ET (cm)
+#                 se1.cm <- SE for cumulative leachate volume (cm)
+
+
+##tall columns
+tall.columns.no.SS.stats.ET$cum.Leach.cm <- tall.columns.no.SS.stats.ET$cum.Leach.vol.mL/area
+
+tall.columns.no.SS.stats.ET$se1.cm <- tall.columns.no.SS.stats.ET$se1/area
+
+##tall columns + structure study
+structure.study.stats.ET$cum.Leach.cm <- structure.study.stats.ET$cum.Leach.vol.mL/area
+
+structure.study.stats.ET$se1.cm <- structure.study.stats.ET$se1/area
+
+##small columns
+
+small.columns.stats.ET$cum.Leach.cm <- small.columns.stats.ET$cum.Leach.vol.mL/area
+
+small.columns.stats.ET$se1.cm <- small.columns.stats.ET$se/10
+
+
+
+
+
+
+#####cleanup themes for ggplot#################################
 
 cleanup <- theme(panel.grid.major = element_blank(),
                 panel.grid.minor = element_blank(),
                 panel.background =  element_blank(),
                 axis.line = element_line(color = "black"))
+###############################################################
+
+
+
+plot(tall.columns.no.SS.stats.ET$ET.cum.cm ~ tall.columns.no.SS.stats.ET$Time.day,
+     
+     ylim = c(0, 2))
+
+
+plot(tall.columns.no.SS.stats.ET$ET.cum.cm ~ tall.columns.no.SS.stats.ET$Time.day,
+     
+     ylim = c(0, 4))
+
+
+
+
+
+
+##"problems" 5-28-17: Q: ET looks constant for days 0-31 and appears to accelerate between the
+
+#                        11th and 12th event  
+
+###                    answers: - Leachate volume rarely exceeded 400 mL (or between 1-2 cm) before the 
+
+#                                 large 9 cm event, so ET estimates appear to be "constant" because of the 
+
+#                                 scale in the following figures (i.e. ET dominates the mass balance until
+#                                 
+#                                 the final event)
+#
+#                               - the accelaration between 30-31 days is due to the fact that I collected
+
+#                                 leachate after only one day during that period(constrained for
+
+#                                 time to sample V5 columns) rather than 3 days
+
+
+#####make one example with  cumulative leachate (cm) instead of ET
+
+Leach.tall.leachate.inf <- ggplot(cum.rain, aes(x = Day, y = Cumulative.rainfall.cm,
+                                          
+                                          ymin = 0,
+                                          
+                                          ymax = Cumulative.rainfall.cm,
+                                          
+                                          xmax = Day)) +
+  geom_line(size = 1, linetype = 2) +
+  
+  scale_y_continuous(limits=c(25,0),
+                     
+                     expand=c(0,0), trans="reverse", position = "right", breaks = c(0,10,20)) +
+  theme_classic() +
+  
+  theme(plot.margin = unit(c(6,17,-35.5,36), units="points"),
+        
+        axis.title.y = element_text(vjust = 0.3, size = 12, face = "bold"),
+        
+        axis.text.y = element_text(size = 15),
+        
+        panel.border = element_rect(color = "black",
+                                    
+                                    fill = NA, size = 3),
+        
+        axis.ticks.y = element_line(size = 1, color = "black")) +
+  
+  ylab("Rain (cm)") +
+  
+  theme(axis.title.y = element_text(vjust = 1.5, hjust = 0.5))
+
+
+
+Leach.tall.leachate.inf
+
+
+Leach.tall.leachate.graph <- ggplot(tall.columns.no.SS.stats.ET, aes(Time.day, cum.Leach.cm,
+                                                               
+                                                               shape = Combo,
+                                                               
+                                                               #ymax = 10,
+                                                               
+                                                               ymax= cum.Leach.cm + se1.cm,
+                                                               
+                                                               xmax = Time.day)) + ##use colour or shape to add in factor
+  
+  geom_point(aes( shape = Combo, color = Combo, size = Combo, stroke = 1.5)) +
+  
+  geom_errorbar(aes(ymin = cum.Leach.cm - se1.cm, ymax = cum.Leach.cm + se1.cm)) +
+  
+  xlab("Time (d)") +
+  
+  ylab("Cumulative Leachate (cm)") +
+  
+  scale_shape_manual(name = "",
+                     
+                     values = c(1, 19, 1, 19),
+                     
+                     labels = c("Clay, No Plant", "Clay, Plant",
+                                
+                                "Sand, No Plant", "Sand, Plant")) +
+  
+  scale_color_manual(name = "",
+                     
+                     values = c('red3', "red3", 'blue1','blue1'), 
+                     
+                     labels = c("Clay, No Plant", "Clay, Plant",
+                                
+                                "Sand, No Plant", "Sand, Plant")) +
+  
+  scale_size_manual(name = "",
+                    
+                    values = c(3.5, 3.5, 3.5, 3.5),
+                    
+                    labels = c("Clay, No Plant", "Clay, Plant",
+                               
+                               "Sand, No Plant", "Sand, Plant")) +
+  
+  geom_text(aes(label = Vol.diff, y = cum.Leach.cm, fontface = "italic"),
+            
+            position = position_dodge(width=0.5),
+            
+            hjust= -1.5, vjust = 0.5) +  #####add in signficance letter--adjusted for errror bars
+  
+  annotation_custom(column.60.pic.grob, xmin = -1, xmax = 11, ymin=2, ymax=10) + ##add in column pic
+  
+  cleanup +
+  
+  theme(plot.margin = unit(c(-1,46.5,1,2), units="points"), ##good legend size
+        
+        #                                       panel.border = element_rect(color = "black",
+        
+        #                                                                 fill = NA, size = 1.75),
+        
+        axis.text.y = element_text(size = 16),  ## change font size of y axis
+        
+        axis.title.y = element_text(size = 16),
+        
+        axis.text.x = element_text(size = 16),  ## change font size of y axis
+        
+        axis.title.x = element_text(size = 16),
+        
+        legend.margin = margin(0, 7, 10, 1, "point"), ##remove margin on legend
+        
+        legend.text = element_text( size = 18),
+        
+        legend.position = c(0.7, 0.4),
+        
+        legend.key=element_blank(),  ##removed gray border around legend symbols
+        
+        legend.key.size = unit(10, "mm"),
+        
+        legend.background = element_rect(color = "black", size = 1.25),
+        
+        legend.key.height = unit(7, "mm"),
+        
+        legend.key.width = unit(7, "mm"),
+        
+        #                                         legend.box.spacing = unit(10, "mm"),
+        
+        legend.text.align = 0,
+        
+        axis.line.x = element_line(color = "black", size = 1.75),
+        
+        
+        axis.ticks.x= element_line(size = 1.75, color = "black"),
+        
+        axis.line.y = element_line(color = "black", size = 1.75),
+        
+        axis.ticks.y = element_line(size = 1.75, color = "black"),
+        
+        axis.ticks.length = unit(2, "mm")) +
+  
+  ## add secondary axis to bottom plot and remove ticks
+  
+  #scale_x_continuous(limits = c(0, 9))+
+  scale_y_continuous(sec.axis = sec_axis(~. * 1, labels = NULL,
+                                         
+                                         breaks = c(10)))
+
+####had to add in a break (18) at some high y value to maintain double y axis, also works to separate two different axes
+
+
+
+Leach.tall.leachate.graph  
+
+Leach.tall.leachate.graph.comb <- grid.arrange(Leach.tall.leachate.inf, Leach.tall.leachate.graph ,
+                                         
+                                         heights = c(1/4, 3/4))
+
+Leach.tall.leachate.graph.comb
+
+
+pdf("C:/Users/Jesse/Desktop/Neonicotinoids_15/Data/Column-Study/Raw-Data-Outputs/Leach.tall.leachate.graph.pdf")                                                          
+Leach.tall.leachate.graph 
+dev.off()
+
+
+###have to use ggsave for grid obsjects
+ggsave(file = "C:/Users/Jesse/Desktop/Neonicotinoids_15/Data/Column-Study/Raw-Data-Outputs/Leach.tall.leachate.graph.comb.pdf", Leach.tall.leachate.graph.comb)
 
 
 
@@ -1671,13 +1905,16 @@ cleanup <- theme(panel.grid.major = element_blank(),
 
 
 
-Leach.tall.ET.inf <- ggplot(tall.columns.no.SS.stats.ET, aes(x = Time.day, y= Cum.inf.cm,
-                                                                    
-                                                                    ymin = 0,
-                                                                    
-                                                                    ymax = Cum.inf.cm,
-                                                                    
-                                                                    xmax = Time.day)) +
+
+
+
+Leach.tall.ET.inf <- ggplot(cum.rain, aes(x = Day, y = Cumulative.rainfall.cm,
+                                          
+                                          ymin = 0,
+                                          
+                                          ymax = Cumulative.rainfall.cm,
+                                          
+                                          xmax = Day)) +
   geom_line(size = 1, linetype = 2) +
   
   scale_y_continuous(limits=c(25,0),
@@ -1710,6 +1947,8 @@ Leach.tall.ET.graph <- ggplot(tall.columns.no.SS.stats.ET, aes(Time.day, ET.cum.
                                                                       
                                                                       shape = Combo,
                                                                       
+                                                                      #ymax = 10,
+                                                               
                                                                       ymax= ET.cum.cm + se.cm,
                                                                       
                                                                       xmax = Time.day)) + ##use colour or shape to add in factor
@@ -1803,6 +2042,7 @@ Leach.tall.ET.graph <- ggplot(tall.columns.no.SS.stats.ET, aes(Time.day, ET.cum.
   
   ## add secondary axis to bottom plot and remove ticks
   
+  #scale_x_continuous(limits = c(0, 9))+
   scale_y_continuous(sec.axis = sec_axis(~. * 1, labels = NULL,
                                          
                                          breaks = c(15)))
@@ -1841,13 +2081,13 @@ structure.study.stats.ET
 
 
 
-structure.study.ET.inf <- ggplot(structure.study.stats.ET, aes(x = Time.day, y = Cum.inf.cm,
-                                                                      
-                                                                      ymin = 0,
-                                                                      
-                                                                      ymax = Cum.inf.cm,
-                                                                      
-                                                                      xmax = Time.day)) +
+structure.study.ET.inf <- ggplot(cum.rain, aes(x = Day, y = Cumulative.rainfall.cm,
+                                               
+                                               ymin = 0,
+                                               
+                                               ymax = Cumulative.rainfall.cm,
+                                               
+                                               xmax = Day)) +
   geom_line(size = 1, linetype = 2) +
   
   scale_y_continuous(limits=c(25,0),
@@ -2007,13 +2247,13 @@ ggsave(file = "C:/Users/Jesse/Desktop/Neonicotinoids_15/Data/Column-Study/Raw-Da
 
 small.columns.stats.ET
 
-Leach.small.ET.inf <- ggplot(small.columns.stats.ET, aes(x = Time.day, y = Cum.inf.cm,
-                                                         
-                                                         ymin = 0,
-                                                         
-                                                         ymax = Cum.inf.cm,
-                                                         
-                                                         xmax = Time.day)) +
+Leach.small.ET.inf <- ggplot(cum.rain, aes(x = Day, y = Cumulative.rainfall.cm,
+                                           
+                                           ymin = 0,
+                                           
+                                           ymax = Cumulative.rainfall.cm,
+                                           
+                                           xmax = Day)) +
   geom_line(size = 1, linetype = 2) +
   
   scale_y_continuous(limits=c(25,0),
@@ -2179,7 +2419,7 @@ ggsave(file = "C:/Users/Jesse/Desktop/Neonicotinoids_15/Data/Column-Study/Raw-Da
 
 
 
-#######################now work on the grid (multipanel figure)######################################
+#######################now work on the grid (multipanel figure)?######################################
 
 
 
@@ -2189,13 +2429,13 @@ ggsave(file = "C:/Users/Jesse/Desktop/Neonicotinoids_15/Data/Column-Study/Raw-Da
 
 ####Tall columns-Grid##########################
 
-Leach.tall.ET.inf.grid <- ggplot(tall.columns.no.SS.stats.ET, aes(x = Time.day, y= Cum.inf.cm,
-                                                             
-                                                             ymin = 0,
-                                                             
-                                                             ymax = Cum.inf.cm,
-                                                             
-                                                             xmax = Time.day)) +
+Leach.tall.ET.inf.grid <- ggplot(cum.rain, aes(x = Day, y = Cumulative.rainfall.cm,
+                                               
+                                               ymin = 0,
+                                               
+                                               ymax = Cumulative.rainfall.cm,
+                                               
+                                               xmax = Day)) +
   geom_line(size = 1, linetype = 2) +
   
   scale_y_continuous(limits=c(25,0),
@@ -2351,13 +2591,13 @@ structure.study.stats.ET
 
 
 
-structure.study.ET.inf.grid <- ggplot(structure.study.stats.ET, aes(x = Time.day, y = Cum.inf.cm,
-                                                               
-                                                               ymin = 0,
-                                                               
-                                                               ymax = Cum.inf.cm,
-                                                               
-                                                               xmax = Time.day)) +
+structure.study.ET.inf.grid <- ggplot(cum.rain, aes(x = Day, y = Cumulative.rainfall.cm,
+                                                    
+                                                    ymin = 0,
+                                                    
+                                                    ymax = Cumulative.rainfall.cm,
+                                                    
+                                                    xmax = Day)) +
   geom_line(size = 1, linetype = 2) +
   
   scale_y_continuous(limits=c(25,0),
@@ -2501,13 +2741,13 @@ structure.study.ET.graph.comb.grid
 
 small.columns.stats.ET
 
-Leach.small.ET.inf.grid <- ggplot(small.columns.stats.ET, aes(x = Time.day, y = Cum.inf.cm,
-                                                         
-                                                         ymin = 0,
-                                                         
-                                                         ymax = Cum.inf.cm,
-                                                         
-                                                         xmax = Time.day)) +
+Leach.small.ET.inf.grid <- ggplot(cum.rain, aes(x = Day, y = Cumulative.rainfall.cm,
+                                                
+                                                ymin = 0,
+                                                
+                                                ymax = Cumulative.rainfall.cm,
+                                                
+                                                xmax = Day)) +
   geom_line(size = 1, linetype = 2) +
   
   scale_y_continuous(limits=c(25,0),
