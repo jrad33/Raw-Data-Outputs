@@ -1,5 +1,7 @@
 rm(list = ls())
 ##test
+
+library(xlsx)
 library(dplyr)
 library(ggplot2)
 library(Rmisc)
@@ -180,7 +182,9 @@ Leachate_full[Leachate_full$ET.mL <= 0, ] ## where Vleach > Vinf
 
 ##now ET(rate) (mm/day)
 
-Leachate_full$ET.rate.mm.d <- Leachate_full$ET.cum.mm/Leachate_full$dt
+Leachate_full$ET.rate.mm.d <- ((Leachate_full$ET.mL/area)* 10)/Leachate_full$dt
+
+Leachate_full$ET.rate.cm.d <- ((Leachate_full$ET.mL/area))/Leachate_full$dt ##in cm/day
 
 
 Leachate_full[Leachate_full$Event == 10,]
@@ -1616,6 +1620,34 @@ column.20.pic.grob <- rasterGrob(column.20.pic, interpolate = T)
 
 
 
+#######attach picture grobs of panel letters (because the grid functions make it a pain in the ass to 
+#adjust multipanel figures)
+
+a <- readPNG("C:/Users/Jesse/Desktop/Neonicotinoids_15/Pics/leachate_pic_a.png")
+
+b <- readPNG("C:/Users/Jesse/Desktop/Neonicotinoids_15/Pics/leachate_pic_b.png")
+
+c <- readPNG("C:/Users/Jesse/Desktop/Neonicotinoids_15/Pics/leachate_pic_c.png")
+
+d <- readPNG("C:/Users/Jesse/Desktop/Neonicotinoids_15/Pics/leachate_pic_d.png")
+
+e <- readPNG("C:/Users/Jesse/Desktop/Neonicotinoids_15/Pics/leachate_pic_e.png")
+
+f <- readPNG("C:/Users/Jesse/Desktop/Neonicotinoids_15/Pics/leachate_pic_f.png")
+
+
+#######################################################################
+
+
+
+
+
+
+
+
+
+
+
 
 
 ##make or insert dataframe that has "stairstep" rainfall
@@ -1631,9 +1663,9 @@ attach(cum.rain)
 
 
 
-######done with preplot analysis
 
-######now start plotting!!!!!!!!
+
+
 
 
 #######plotting a CUmualtive ET (mm) vs t seems most appropriate
@@ -1648,10 +1680,16 @@ tall.columns.no.SS.stats.ET$ET.cum.cm <- tall.columns.no.SS.stats.ET$ET.cum.mm/1
 
 tall.columns.no.SS.stats.ET$se.cm <- tall.columns.no.SS.stats.ET$se/10
 
+tall.columns.no.SS.stats.ET$sd.cm <- tall.columns.no.SS.stats.ET$sd/10
+
+
 ##tall columns + structure study
 structure.study.stats.ET$ET.cum.cm <- structure.study.stats.ET$ET.cum.mm/10
 
 structure.study.stats.ET$se.cm <- structure.study.stats.ET$se/10
+
+structure.study.stats.ET$sd.cm <- structure.study.stats.ET$sd/10
+
 
 ##small columns
 
@@ -1659,7 +1697,7 @@ small.columns.stats.ET$ET.cum.cm <- small.columns.stats.ET$ET.cum.mm/10
 
 small.columns.stats.ET$se.cm <- small.columns.stats.ET$se/10
 
-
+small.columns.stats.ET$sd.cm <- small.columns.stats.ET$sd/10
 
 
 
@@ -1690,7 +1728,67 @@ small.columns.stats.ET$se1.cm <- small.columns.stats.ET$se/10
 
 
 
+####get cumulative ET and ET rate (daily) for table in paper
 
+#isolate day 33
+
+#tall columns w/oit structureless trt
+ET.table.tall <- tall.columns.no.SS.stats.ET[tall.columns.no.SS.stats.ET$Time.day == 33,]
+
+ET.table.tall$ET.rate.cm <- ET.table.tall$ET.cum.cm/33
+
+ET.table.tall$ET.rate.cm.se <- ET.table.tall$se.cm/33
+
+ET.table.tall$ET.rate.cm.sd <- ET.table.tall$sd.cm/33
+
+#export to an excel file
+
+write.xlsx(ET.table.tall , "C:/Users/Jesse/Desktop/Neonicotinoids_15/Data/Column-Study/Raw-Data-Outputs/ET.table.tall.xlsx")
+
+
+
+
+#structure study
+
+structure.study.stats.ET
+  
+ET.table.structure <- structure.study.stats.ET[structure.study.stats.ET$Time.day == 33,]  
+
+ET.table.structure$ET.rate.cm <- ET.table.structure$ET.cum.cm/33
+
+ET.table.structure$ET.rate.cm.se <- ET.table.structure$se.cm/33
+
+ET.table.structure$ET.rate.cm.sd <- ET.table.structure$sd.cm/33
+
+#export to an excel file
+
+write.xlsx(ET.table.structure , "C:/Users/Jesse/Desktop/Neonicotinoids_15/Data/Column-Study/Raw-Data-Outputs/ET.table.structure.xlsx")
+
+
+
+
+
+
+ET.table.small <- small.columns.stats.ET[small.columns.stats.ET$Time.day == 33,]
+
+ET.table.small$ET.rate.cm <- ET.table.small$ET.cum.cm/33
+
+ET.table.small$ET.rate.cm.se <- ET.table.small$se.cm/33
+
+ET.table.small$ET.rate.cm.sd <- ET.table.small$sd.cm/33
+
+#export to an excel file
+
+write.xlsx(ET.table.small, "C:/Users/Jesse/Desktop/Neonicotinoids_15/Data/Column-Study/Raw-Data-Outputs/ET.table.small.xlsx")
+
+
+
+
+
+
+######done with preplot analysis
+
+######now start plotting!!!!!!!!
 
 
 #####cleanup themes for ggplot#################################
@@ -1901,11 +1999,7 @@ ggsave(file = "C:/Users/Jesse/Desktop/Neonicotinoids_15/Data/Column-Study/Raw-Da
 
 
 
-
-
-
-
-
+############start ET graphs
 
 
 Leach.tall.ET.inf <- ggplot(cum.rain, aes(x = Day, y = Cumulative.rainfall.cm,
@@ -2067,6 +2161,118 @@ dev.off()
 
 ###have to use ggsave for grid obsjects
 ggsave(file = "C:/Users/Jesse/Desktop/Neonicotinoids_15/Data/Column-Study/Raw-Data-Outputs/Leach.tall.ET.graph.comb.pdf", Leach.tall.ET.graph.comb)
+
+
+####try making a plot with both ET and leachate
+
+
+mass.balance <- Leach.tall.ET.graph + 
+  
+  geom_point(data = tall.columns.no.SS.stats.ET, aes(Time.day, cum.Leach.cm,
+                                                     
+                                                     shape = Combo,
+                                                     
+                                                     #ymax = 10,
+                                                     
+                                                     ymax= cum.Leach.cm + se1.cm,
+                                                     
+                                                     xmax = Time.day,
+                                                     
+                                                     shape = Combo, color = Combo,
+                                                     
+                                                     size = Combo, stroke = 1.5)) +
+  
+  geom_errorbar(aes(ymin = cum.Leach.cm - se1.cm, ymax = cum.Leach.cm + se1.cm)) +
+  
+  xlab("Time (d)") +
+  
+  ylab("Cumulative Leachate (cm)") +
+  
+  scale_shape_manual(name = "",
+                     
+                     values = c(2, 17, 2, 17),
+                     
+                     labels = c("Clay, No Plant", "Clay, Plant",
+                                
+                                "Sand, No Plant", "Sand, Plant")) +
+  
+  scale_color_manual(name = "",
+                     
+                     values = c('red3', "red3", 'blue1','blue1'), 
+                     
+                     labels = c("Clay, No Plant", "Clay, Plant",
+                                
+                                "Sand, No Plant", "Sand, Plant")) +
+  
+  scale_size_manual(name = "",
+                    
+                    values = c(3.5, 3.5, 3.5, 3.5),
+                    
+                    labels = c("Clay, No Plant", "Clay, Plant",
+                               
+                               "Sand, No Plant", "Sand, Plant")) +
+  
+  geom_text(aes(label = Vol.diff, y = cum.Leach.cm, fontface = "italic"),
+            
+            position = position_dodge(width=0.5),
+            
+            hjust= -1.5, vjust = 0.5) +  #####add in signficance letter--adjusted for errror bars
+  
+  #annotation_custom(column.60.pic.grob, xmin = -1, xmax = 11, ymin=2, ymax=10) + ##add in column pic
+  
+  cleanup +
+  
+  theme(plot.margin = unit(c(-1,46.5,1,2), units="points"), ##good legend size
+        
+        #                                       panel.border = element_rect(color = "black",
+        
+        #                                                                 fill = NA, size = 1.75),
+        
+        axis.text.y = element_text(size = 16),  ## change font size of y axis
+        
+        axis.title.y = element_text(size = 16),
+        
+        axis.text.x = element_text(size = 16),  ## change font size of y axis
+        
+        axis.title.x = element_text(size = 16),
+        
+        legend.margin = margin(0, 7, 10, 1, "point"), ##remove margin on legend
+        
+        legend.text = element_text( size = 18),
+        
+        legend.position = c(0.7, 0.4),
+        
+        legend.key=element_blank(),  ##removed gray border around legend symbols
+        
+        legend.key.size = unit(10, "mm"),
+        
+        legend.background = element_rect(color = "black", size = 1.25),
+        
+        legend.key.height = unit(7, "mm"),
+        
+        legend.key.width = unit(7, "mm"),
+        
+        #                                         legend.box.spacing = unit(10, "mm"),
+        
+        legend.text.align = 0,
+        
+        axis.line.x = element_line(color = "black", size = 1.75),
+        
+        
+        axis.ticks.x= element_line(size = 1.75, color = "black"),
+        
+        axis.line.y = element_line(color = "black", size = 1.75),
+        
+        axis.ticks.y = element_line(size = 1.75, color = "black"),
+        
+        axis.ticks.length = unit(2, "mm")) +
+  
+  ## add secondary axis to bottom plot and remove ticks
+  
+  #scale_x_continuous(limits = c(0, 9))+
+  scale_y_continuous(sec.axis = sec_axis(~. * 1, labels = NULL,
+                                         
+                                         breaks = c(10)))
 
 
 
@@ -2935,6 +3141,32 @@ ET.grid
 ggsave(file = "C:/Users/Jesse/Desktop/Neonicotinoids_15/Data/Column-Study/Raw-Data-Outputs/ET.grid.pdf", ET.grid)
 ET.grid
 dev.off()
+
+
+
+
+
+
+
+
+
+
+#########now just report a table in SI with cumualtive ET and estimated rate???
+
+plot(tall.columns.no.SS.stats.ET$cum.Leach.cm ~ tall.columns.no.SS.stats.ET$Time.day)
+
+plot(tall.columns.no.SS.stats.ET$cum.Leach.vol.mL ~ tall.columns.no.SS.stats.ET$Time.day)
+
+
+ggplot(tall.columns.no.SS.stats.ET, aes(x = Time.day, y = cum.Leach.vol.mL)) +
+         
+         geom_point( aes(shape = Combo, size = 1.25))
+
+
+
+
+
+
 
 
 

@@ -1,7 +1,7 @@
 rm(list = ls())
-Leachate_full <- read.csv("C:/Users/Jesse/Desktop/Neonicotinoids_15/Data/Column-Study/Raw-Data-Outputs/Leachate_full_R.csv")
-attach(Leachate_full)
+##test
 
+library(xlsx)
 library(dplyr)
 library(ggplot2)
 library(Rmisc)
@@ -11,17 +11,41 @@ library(multcompView)
 library(lawstat)
 #library(dplyr)
 
+
+##JBR
+##5/16/17
+###Estimating ET for Column Experiment
+
+
+
+###Assumptions:
+#             - no change in storage over time after initial drainage following
+#               saturation event, or theta was ~ equivalent to field capacity
+#             - no evaporation during rain events... (probably realistic since, the simulator "chamber" was closed
+#               and rain event was 7 mins in duration)
+#             - so I = P
+#             -  I - Leachate = ET
+
+
+#######start Data cleaning and initial calculations (using code from Leachate_full)
+
+###includes TMX mass and conc analysis from Leachate_full...keep same organization/structure
+
+###note that 300 mL will be maxiumum "ET" from events 1-11 and 3000 mL Will be max ET for event 12,
+#whereas in reality torage was probably changing before final event and ET > Inf
+
+
+Leachate_full <- read.csv("C:/Users/Jesse/Desktop/Neonicotinoids_15/Data/Column-Study/Raw-Data-Outputs/Leachate_full_R.csv")
+attach(Leachate_full)
+
+
 Leachate_full
 
 str(Leachate_full)
 
 head(Leachate_full)
 
-#colnames(Leachate_Final) <- "Sample.ID"
 
-Leachate_Final$Sample.ID
-
-Leachate_full
 
 ###first clean data source
 
@@ -30,7 +54,7 @@ Leachate_full
 #if(Leachate_full$Leach.Vol.mL <= 0.3) {
 #  Leachate_full$Leach.Vol.mL <- 0
 #}
-  
+
 Leachate_full$Leach.Vol.mL[Leach.Vol.mL <= 0.3] <- 0 #### this works!
 
 Leachate_full$Leach.Vol.mL[Leach.Vol.mL == 0] <- NA   ###replace 0 with NA in volumne leachate
@@ -38,21 +62,6 @@ Leachate_full$Leach.Vol.mL[Leach.Vol.mL == 0] <- NA   ###replace 0 with NA in vo
 Leachate_full$TMX_PPB[TMX_PPB == 0] <- NA   ###replace 0 with NA in leachate conc
 
 Leachate_full
-
-
-
-
-#Leachate_full$cum.Leach.vol.mL <- for(i in  Leachate_full$Leach.Vol.mL) {
-  
- #                                 if(Leachate_full$Sample.ID == "identity" & Leachate_full$Time.day == "identity") {
-                                    
-  #                                cumsum(i)  
-                                    
-   #                               } else{NA
-                                      
-    #                              }
-       #  
-        #                          }
 
 
 
@@ -70,7 +79,7 @@ Leachate_full$cum.Leach.vol.mL <- ave(Leachate_full$Leach.Vol.mL,
 
 ### cumulative function but NAs not removed in calculation, "KF-60 cm-LS/SS-5" leached less than 400 mL total!
 
-### ave() is a shorthand way of treating a function by group (for staced data)----just adjust function within body^^
+### ave() is a shorthand way of treating a function by group (for stacked data)----just adjust function within body^^
 
 
 
@@ -85,8 +94,8 @@ Leachate_full$TMX.micrg <- Leachate_full$TMX.ng/1000
 ####now calculate the cumulative TMX mass transported 
 
 Leachate_full$cum.TMX.ng <- ave(Leachate_full$TMX.ng,
-                                      
-                                      Leachate_full$Sample.ID, FUN=cum.na) ####good!
+                                
+                                Leachate_full$Sample.ID, FUN=cum.na) ####good!
 
 Leachate_full$cum.TMX.micrg <- Leachate_full$cum.TMX.ng/1000
 
@@ -97,9 +106,9 @@ Leachate_full$cum.TMX.micrg <- Leachate_full$cum.TMX.ng/1000
 #"KF-60 cm-LS/SS-4", "NK-20 cm-LS-Exp-4"
 
 Leachate_full[Leachate_full$Sample.ID == "KF-60 cm-LS-Exp-4",] ##row 436
-              
+
 Leachate_full[Leachate_full$Sample.ID == "KF-60 cm-LS/SS-4",]  ##row 467
-                
+
 Leachate_full[Leachate_full$Sample.ID == "NK-20 cm-LS-Exp-4",]  ## row 463
 
 #Leachate_full <- subset(Leachate_full, Sample.ID != "KF-60 cm-LS-Exp-4" & Event != 12)
@@ -107,6 +116,103 @@ Leachate_full[Leachate_full$Sample.ID == "NK-20 cm-LS-Exp-4",]  ## row 463
 #Leachate_full[Leachate_full$Sample.ID == "KF-60 cm-LS-Exp-4",]
 
 Leachate_full <- Leachate_full[-c(436, 467, 463),] ###this is a useful code---- from dplyr? removed selected!
+
+Leachate_full
+
+
+tail(Leachate_full)
+
+
+
+
+###ET estimates##########################################################################
+
+###need ET(rate) and ET(cumualtive)
+
+Leachate_full$Leach.Vol.mL[is.na(Leachate_full$Leach.Vol.mL)] <- 0 ##change NA's back to 0 for calculation
+
+
+
+
+
+### ET(cumulative) first (mL)
+
+Leachate_full$ET.cum.mL <- Leachate_full$cum.inf.mL - Leachate_full$cum.Leach.vol.mL 
+
+Leachate_full
+
+###a couple of negative values: KF-20 cm-LS-Ctr-5 and KF-20 cm-LS-Exp-3
+
+### Leachate exceeded input... these columns may have been slightly above field capacity initailly?
+
+###should be fine when averaged
+
+
+
+
+
+###convert to mm ... more conventional to use length
+##column area
+
+radius <- 10 ## radius in cm 
+area <- pi * (radius)^2
+
+Leachate_full$ET.cum.mm <- (Leachate_full$ET.cum.mL / area) * 10 ## cumulative ET in mm
+
+tail(Leachate_full)
+
+Leachate_full[Leachate_full$Event == 11,]
+
+
+
+##ET(t) mL
+Leachate_full$ET.mL <- Leachate_full$Inf.mL - Leachate_full$Leach.Vol.mL
+##negative values towards the end... why???
+
+Leachate_full[Leachate_full$Event == 1, ]
+
+Leachate_full[Leachate_full$ET.mL <= 0, ] ## where Vleach > Vinf
+##seems highest (most negative in Clay-20cm-no plant)
+##wait and see if it affects the average but... should be expressed anyway
+
+
+
+
+
+
+##now ET(rate) (mm/day)
+
+Leachate_full$ET.rate.mm.d <- ((Leachate_full$ET.mL/area)* 10)/Leachate_full$dt
+
+Leachate_full$ET.rate.cm.d <- ((Leachate_full$ET.mL/area))/Leachate_full$dt ##in cm/day
+
+
+Leachate_full[Leachate_full$Event == 10,]
+Leachate_full[Leachate_full$Event == 11,]
+Leachate_full[Leachate_full$Event == 12,]
+
+
+######try p rate - et rate (in cm day^-1)
+
+
+Leachate_full$p-et.cm.day <- 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -131,12 +237,12 @@ tall.columns.stats <- summarySE(tall.columns, measurevar="TMX_PPB",
 #Letters.tall.leach
 
 #tall.columns.stats$Letters <- ifelse(tall.columns.stats$TMX_PPB == 10.25525743, 6, 
-                                     
- #                                    1)
+
+#                                    1)
 tall.columns.stats
 
 
-?summarySE()
+
 
 
 
@@ -150,28 +256,28 @@ tall.columns.no.SS <- subset(tall.columns, Structure == "S" | Texture == "Sand")
 tall.columns.no.SS
 
 tall.columns.no.SS.stats <- summarySE(tall.columns.no.SS, measurevar="TMX_PPB",
-                                
-                                groupvars=c("Texture","Plant.Influence",
-                                            
-                                            "Time.day"), na.rm =TRUE) ## 
+                                      
+                                      groupvars=c("Texture","Plant.Influence",
+                                                  
+                                                  "Time.day"), na.rm =TRUE) ## 
 tall.columns.no.SS.stats
 
 ### need to add column with cum.inf.cm
 
 tall.columns.no.SS.stats$Cum.inf.cm <- ifelse(tall.columns.no.SS.stats$Time.day == 3, 0.9,
-                                       ifelse(tall.columns.no.SS.stats$Time.day == 6, 1.8,
-                                        ifelse(tall.columns.no.SS.stats$Time.day == 9, 2.7,
-                                         ifelse(tall.columns.no.SS.stats$Time.day == 12, 3.6,
-                                          ifelse(tall.columns.no.SS.stats$Time.day == 15, 4.5,
-                                           ifelse(tall.columns.no.SS.stats$Time.day == 18, 5.4,
-                                            ifelse(tall.columns.no.SS.stats$Time.day == 21, 6.3,
-                                             ifelse(tall.columns.no.SS.stats$Time.day == 24, 7.2,
-                                              ifelse(tall.columns.no.SS.stats$Time.day == 27, 8.1,
-                                               ifelse(tall.columns.no.SS.stats$Time.day == 30, 9,
-                                                ifelse(tall.columns.no.SS.stats$Time.day == 31, 9.9,
-                                                 ifelse(tall.columns.no.SS.stats$Time.day == 33, 18.9,
-                                                        NA
-                                                        ))))))))))))
+                                              ifelse(tall.columns.no.SS.stats$Time.day == 6, 1.8,
+                                                     ifelse(tall.columns.no.SS.stats$Time.day == 9, 2.7,
+                                                            ifelse(tall.columns.no.SS.stats$Time.day == 12, 3.6,
+                                                                   ifelse(tall.columns.no.SS.stats$Time.day == 15, 4.5,
+                                                                          ifelse(tall.columns.no.SS.stats$Time.day == 18, 5.4,
+                                                                                 ifelse(tall.columns.no.SS.stats$Time.day == 21, 6.3,
+                                                                                        ifelse(tall.columns.no.SS.stats$Time.day == 24, 7.2,
+                                                                                               ifelse(tall.columns.no.SS.stats$Time.day == 27, 8.1,
+                                                                                                      ifelse(tall.columns.no.SS.stats$Time.day == 30, 9,
+                                                                                                             ifelse(tall.columns.no.SS.stats$Time.day == 31, 9.9,
+                                                                                                                    ifelse(tall.columns.no.SS.stats$Time.day == 33, 18.9,
+                                                                                                                           NA
+                                                                                                                    ))))))))))))
 
 
 
@@ -185,33 +291,33 @@ row.names(tall.columns.no.SS.stats) = "12"
 
 ######## add in sig letters and make all exclusions = NA
 
-  tall.columns.no.SS.stats$Letters <-  ifelse(tall.columns.no.SS.stats$Texture == "Clay" & 
-                                                
-                                                tall.columns.no.SS.stats$Time.day == "33", "a",
+tall.columns.no.SS.stats$Letters <-  ifelse(tall.columns.no.SS.stats$Texture == "Clay" & 
                                               
-                                              ifelse (tall.columns.no.SS.stats$Texture == "Sand" & 
-                                                        
-                                                        tall.columns.no.SS.stats$Time.day == "33", "b",
+                                              tall.columns.no.SS.stats$Time.day == "33", "a",
+                                            
+                                            ifelse (tall.columns.no.SS.stats$Texture == "Sand" & 
                                                       
-                                                      NA)
-  )
-  
-  
- ######Good 
-  
-  
-   
-  tall.columns.no.SS.stats
-  
-##now make factorial combo (eg. clay No Plant)
-  
-  tall.columns.no.SS.stats$Combo <- paste(tall.columns.no.SS.stats$Texture,
-                                          
-                                          tall.columns.no.SS.stats$Plant.Influence)
+                                                      tall.columns.no.SS.stats$Time.day == "33", "b",
+                                                    
+                                                    NA)
+)
 
-  tall.columns.no.SS.stats ##good
-  
-  
+
+######Good 
+
+
+
+tall.columns.no.SS.stats
+
+##now make factorial combo (eg. clay No Plant)
+
+tall.columns.no.SS.stats$Combo <- paste(tall.columns.no.SS.stats$Texture,
+                                        
+                                        tall.columns.no.SS.stats$Plant.Influence)
+
+tall.columns.no.SS.stats ##good
+
+
 
 ###########Structure Study*******************
 
@@ -230,47 +336,47 @@ tail(structure.study)
 structure.study
 
 structure.study.stats <- summarySE(structure.study, measurevar="TMX_PPB",
-          
-          groupvars=c("Structure",
-                      
-                      "Time.day"), na.rm =TRUE) ## stat summary
+                                   
+                                   groupvars=c("Structure",
+                                               
+                                               "Time.day"), na.rm =TRUE) ## stat summary
 
 structure.study.stats
 
 structure.study.stats$Letters <-  ifelse(structure.study.stats$Structure == "NS" & 
-                                              
-                                   structure.study.stats$Time.day == "33", "a",
-                                            
-                                            ifelse (structure.study.stats$Structure == "S" & 
-                                                      
-                                                      structure.study.stats$Time.day == "33", "b",
-                                                    
-                                                    NA)
+                                           
+                                           structure.study.stats$Time.day == "33", "a",
+                                         
+                                         ifelse (structure.study.stats$Structure == "S" & 
+                                                   
+                                                   structure.study.stats$Time.day == "33", "b",
+                                                 
+                                                 NA)
 )
 
 structure.study.stats
 
 structure.study.stats$Cum.inf.cm <- ifelse(structure.study.stats$Time.day == 3, 0.9,
-       ifelse(structure.study.stats$Time.day == 6, 1.8,
-        ifelse(structure.study.stats$Time.day == 9, 2.7,
-         ifelse(structure.study.stats$Time.day == 12, 3.6,
-          ifelse(structure.study.stats$Time.day == 15, 4.5,
-           ifelse(structure.study.stats$Time.day == 18, 5.4,
-            ifelse(structure.study.stats$Time.day == 21, 6.3,
-             ifelse(structure.study.stats$Time.day == 24, 7.2,
-              ifelse(structure.study.stats$Time.day == 27, 8.1,
-               ifelse(structure.study.stats$Time.day == 30, 9,
-                ifelse(structure.study.stats$Time.day == 31, 9.9,
-                 ifelse(structure.study.stats$Time.day == 33, 18.9,
-                  NA
-))))))))))))
+                                           ifelse(structure.study.stats$Time.day == 6, 1.8,
+                                                  ifelse(structure.study.stats$Time.day == 9, 2.7,
+                                                         ifelse(structure.study.stats$Time.day == 12, 3.6,
+                                                                ifelse(structure.study.stats$Time.day == 15, 4.5,
+                                                                       ifelse(structure.study.stats$Time.day == 18, 5.4,
+                                                                              ifelse(structure.study.stats$Time.day == 21, 6.3,
+                                                                                     ifelse(structure.study.stats$Time.day == 24, 7.2,
+                                                                                            ifelse(structure.study.stats$Time.day == 27, 8.1,
+                                                                                                   ifelse(structure.study.stats$Time.day == 30, 9,
+                                                                                                          ifelse(structure.study.stats$Time.day == 31, 9.9,
+                                                                                                                 ifelse(structure.study.stats$Time.day == 33, 18.9,
+                                                                                                                        NA
+                                                                                                                 ))))))))))))
 
 structure.study.stats
 
 ##now make factorial combo (eg. clay No Plant)
 
 #structure.study.stats$Combo <- paste(structure.study.stats$Texture,
-                                        
+
 #                                     structure.study.stats$Plant.Influence)
 
 #structure.study.stats ##good
@@ -292,46 +398,46 @@ small.columns
 tail(small.columns)
 
 small.columns.stats <- summarySE(small.columns, measurevar="TMX_PPB",
-                                
-                                groupvars=c("Texture", "Plant.Influence",
-                                            
-                                            "Time.day"), na.rm =TRUE)
+                                 
+                                 groupvars=c("Texture", "Plant.Influence",
+                                             
+                                             "Time.day"), na.rm =TRUE)
 
 
 Letters.small
 
 small.columns.stats$Letters <- ifelse(small.columns.stats$Texture == "Clay" & 
                                         
-                                      small.columns.stats$Time.day == "33" &
+                                        small.columns.stats$Time.day == "33" &
+                                        
+                                        small.columns.stats$Plant.Influence == "No Plant", "ab",
                                       
-                                      small.columns.stats$Plant.Influence == "No Plant", "ab",
-                                      
-                                        ifelse (small.columns.stats$Texture == "Clay" & 
+                                      ifelse (small.columns.stats$Texture == "Clay" & 
                                                 
                                                 small.columns.stats$Time.day == "33" &
                                                 
                                                 small.columns.stats$Plant.Influence == "Plant",
-                                                
-                                                "b", 
-                                                
-                                                ifelse(small.columns.stats$Texture == "Sand" & 
-                                                         
+                                              
+                                              "b", 
+                                              
+                                              ifelse(small.columns.stats$Texture == "Sand" & 
+                                                       
                                                        small.columns.stats$Time.day == "33" &
                                                        
                                                        small.columns.stats$Plant.Influence == "No Plant",
-                                                       
-                                                       "ab",
-                                                       
-                                                       ifelse(small.columns.stats$Texture == "Sand" & 
-                                                                
-                                                                small.columns.stats$Time.day == "33" &
+                                                     
+                                                     "ab",
+                                                     
+                                                     ifelse(small.columns.stats$Texture == "Sand" & 
+                                                              
+                                                              small.columns.stats$Time.day == "33" &
                                                               
                                                               small.columns.stats$Plant.Influence == "Plant",
-                                                              
-                                                              "a", NA)
+                                                            
+                                                            "a", NA)
+                                              )
+                                      )
 )
- )
-  )
 
 
 small.columns.stats
@@ -339,26 +445,26 @@ small.columns.stats
 Letters.small
 
 small.columns.stats$Cum.inf.cm <- ifelse(small.columns.stats$Time.day == 3, 0.9,
- ifelse(small.columns.stats$Time.day == 6, 1.8,
-  ifelse(small.columns.stats$Time.day == 9, 2.7,
-    ifelse(small.columns.stats$Time.day == 12, 3.6,
-      ifelse(small.columns.stats$Time.day == 15, 4.5,
-        ifelse(small.columns.stats$Time.day == 18, 5.4,
-          ifelse(small.columns.stats$Time.day == 21, 6.3,
-            ifelse(small.columns.stats$Time.day == 24, 7.2,
-              ifelse(small.columns.stats$Time.day == 27, 8.1,
-                ifelse(small.columns.stats$Time.day == 30, 9,
-                  ifelse(small.columns.stats$Time.day == 31, 9.9,
-                    ifelse(small.columns.stats$Time.day == 33, 18.9,
-                     NA
-))))))))))))
+                                         ifelse(small.columns.stats$Time.day == 6, 1.8,
+                                                ifelse(small.columns.stats$Time.day == 9, 2.7,
+                                                       ifelse(small.columns.stats$Time.day == 12, 3.6,
+                                                              ifelse(small.columns.stats$Time.day == 15, 4.5,
+                                                                     ifelse(small.columns.stats$Time.day == 18, 5.4,
+                                                                            ifelse(small.columns.stats$Time.day == 21, 6.3,
+                                                                                   ifelse(small.columns.stats$Time.day == 24, 7.2,
+                                                                                          ifelse(small.columns.stats$Time.day == 27, 8.1,
+                                                                                                 ifelse(small.columns.stats$Time.day == 30, 9,
+                                                                                                        ifelse(small.columns.stats$Time.day == 31, 9.9,
+                                                                                                               ifelse(small.columns.stats$Time.day == 33, 18.9,
+                                                                                                                      NA
+                                                                                                               ))))))))))))
 
 small.columns.stats
 
 ##now make factorial combo (eg. clay No Plant)
 
 small.columns.stats$Combo <- paste(small.columns.stats$Texture,
-                                        
+                                   
                                    small.columns.stats$Plant.Influence)
 
 small.columns.stats ##good
@@ -371,7 +477,7 @@ small.columns.stats ##good
 
 
 #############stats on mass TMX transported
-         
+
 #### tall columns no SS first
 
 tall.columns.no.SS
@@ -466,7 +572,7 @@ kruskal.test(structure.study.final$cum.TMX.micrg ~ structure.study.final$Structu
 
 
 
-################Stats on short columns ---tmx transport
+################Stats on short columns ---tmx mass transport
 
 small.columns ##somehow there are a few 60 cm columns
 
@@ -522,16 +628,16 @@ small.columns.final
 
 
 #fligner.test(small.columns.final$Rank.TMX.mcrg ~
-               
+
 #               interaction(small.columns.final$Texture,
-                           
+
 #                           small.columns.final$Plant.Influence))## meets HOV
 
 #ANOVA.small.mass <- aov(small.columns.final$Rank.TMX.mcrg ~
-                          
- #                         small.columns.final$Texture *
-                          
-  #                        small.columns.final$Plant.Influence)
+
+#                         small.columns.final$Texture *
+
+#                        small.columns.final$Plant.Influence)
 
 #summary.small.columns.mass <- summary(ANOVA.small.mass)
 
@@ -583,7 +689,7 @@ fligner.test(tall.columns.no.SS.final$log10.cum.Leach.vol.mL ~
 
 
 ANOVA.tall.Leach.vol <- aov(tall.columns.no.SS.final$log10.cum.Leach.vol.mL ~
-                         
+                              
                               tall.columns.no.SS.final$Texture * tall.columns.no.SS.final$Plant.Influence)
 
 summary.tall.Leach.vol <- summary(ANOVA.tall.Leach.vol)
@@ -651,10 +757,10 @@ fligner.test(small.columns.final$rank.cum.Leach.vol.mL ~
                interaction(small.columns.final$Texture, small.columns.final$Plant.Influence))##HOV met
 
 #ANOVA.small.Leach.volume <- aov(small.columns.final$small.columns.final$rank.cum.Leach.vol.mL ~
-                                  
- #                                 small.columns.final$Texture *
-                                  
-  #                                small.columns.final$Plant.Influence)
+
+#                                 small.columns.final$Texture *
+
+#                                small.columns.final$Plant.Influence)
 
 #summary.small.columns.Leach.volume <- summary(ANOVA.small.Leach.volume)
 
@@ -676,10 +782,10 @@ hist(small.columns.final$log10.cum.Leach.vol.mL)###stick with log10 trans
 
 
 ANOVA.small.Leach.volume <- aov(small.columns.final$log10.cum.Leach.vol.mL ~
-                          
-                          small.columns.final$Texture *
-                          
-                          small.columns.final$Plant.Influence)
+                                  
+                                  small.columns.final$Texture *
+                                  
+                                  small.columns.final$Plant.Influence)
 
 summary.small.columns.Leach.volume <- summary(ANOVA.small.Leach.volume)
 
@@ -717,27 +823,27 @@ tall.columns.no.SS
 
 
 tall.columns.no.SS.stats.mass <- summarySE(tall.columns.no.SS, measurevar="cum.TMX.micrg" ,
-                                      
-                                      groupvars=c("Texture","Plant.Influence",
-                                                  
-                                                  "Time.day"), na.rm =TRUE) ## 
+                                           
+                                           groupvars=c("Texture","Plant.Influence",
+                                                       
+                                                       "Time.day"), na.rm =TRUE) ## 
 tall.columns.no.SS.stats.mass
 
 
 tall.columns.no.SS.stats.mass1 <- summarySE(tall.columns.no.SS, measurevar="cum.Leach.vol.mL",
-          
-          groupvars=c("Texture","Plant.Influence",
-                      
-                      "Time.day"), na.rm =TRUE) ##make df out of cum leachate
+                                            
+                                            groupvars=c("Texture","Plant.Influence",
+                                                        
+                                                        "Time.day"), na.rm =TRUE) ##make df out of cum leachate
 
 #tall.columns.no.SS.stats.mass1 <- subset(tall.columns.no.SS.stats.mass1,
-                                         
- #                                        select = c("cum.Leach.vol.mL", "sd", "se", "ci"))
+
+#                                        select = c("cum.Leach.vol.mL", "sd", "se", "ci"))
 
 colnames(tall.columns.no.SS.stats.mass1) <-  c("Texture", "Plant.Influence", "Time.day", "N1",
-
+                                               
                                                "cum.Leach.vol.mL", "sd1",
-
+                                               
                                                "se1", "ci1")  ##preserve imp common variables and change stats                                                        
 
 tall.columns.no.SS.stats.mass1
@@ -760,19 +866,19 @@ tall.columns.no.SS.stats.mass ## good
 ### need to add column with cum.inf.cm
 
 tall.columns.no.SS.stats.mass$Cum.inf.cm <- ifelse(tall.columns.no.SS.stats.mass$Time.day == 3, 0.9,
-                                              ifelse(tall.columns.no.SS.stats.mass$Time.day == 6, 1.8,
-                                                     ifelse(tall.columns.no.SS.stats.mass$Time.day == 9, 2.7,
-                                                            ifelse(tall.columns.no.SS.stats.mass$Time.day == 12, 3.6,
-                                                                   ifelse(tall.columns.no.SS.stats.mass$Time.day == 15, 4.5,
-                                                                          ifelse(tall.columns.no.SS.stats.mass$Time.day == 18, 5.4,
-                                                                                 ifelse(tall.columns.no.SS.stats.mass$Time.day == 21, 6.3,
-                                                                                        ifelse(tall.columns.no.SS.stats.mass$Time.day == 24, 7.2,
-                                                                                               ifelse(tall.columns.no.SS.stats.mass$Time.day == 27, 8.1,
-                                                                                                      ifelse(tall.columns.no.SS.stats.mass$Time.day == 30, 9,
-                                                                                                             ifelse(tall.columns.no.SS.stats.mass$Time.day == 31, 9.9,
-                                                                                                                    ifelse(tall.columns.no.SS.stats.mass$Time.day == 33, 18.9,
-                                                                                                                           NA
-                                                                                                                    ))))))))))))
+                                                   ifelse(tall.columns.no.SS.stats.mass$Time.day == 6, 1.8,
+                                                          ifelse(tall.columns.no.SS.stats.mass$Time.day == 9, 2.7,
+                                                                 ifelse(tall.columns.no.SS.stats.mass$Time.day == 12, 3.6,
+                                                                        ifelse(tall.columns.no.SS.stats.mass$Time.day == 15, 4.5,
+                                                                               ifelse(tall.columns.no.SS.stats.mass$Time.day == 18, 5.4,
+                                                                                      ifelse(tall.columns.no.SS.stats.mass$Time.day == 21, 6.3,
+                                                                                             ifelse(tall.columns.no.SS.stats.mass$Time.day == 24, 7.2,
+                                                                                                    ifelse(tall.columns.no.SS.stats.mass$Time.day == 27, 8.1,
+                                                                                                           ifelse(tall.columns.no.SS.stats.mass$Time.day == 30, 9,
+                                                                                                                  ifelse(tall.columns.no.SS.stats.mass$Time.day == 31, 9.9,
+                                                                                                                         ifelse(tall.columns.no.SS.stats.mass$Time.day == 33, 18.9,
+                                                                                                                                NA
+                                                                                                                         ))))))))))))
 
 
 
@@ -789,14 +895,14 @@ Letters.tall.leach.mass
 ######## add in sig letters and make all exclusions = NA
 
 tall.columns.no.SS.stats.mass$Letters <-  ifelse(tall.columns.no.SS.stats.mass$Texture == "Clay" & 
-                                              
-                                              tall.columns.no.SS.stats.mass$Time.day == "33", "a",
-                                            
-                                            ifelse (tall.columns.no.SS.stats.mass$Texture == "Sand" & 
-                                                      
-                                                      tall.columns.no.SS.stats.mass$Time.day == "33", "b",
-                                                    
-                                                    NA)
+                                                   
+                                                   tall.columns.no.SS.stats.mass$Time.day == "33", "a",
+                                                 
+                                                 ifelse (tall.columns.no.SS.stats.mass$Texture == "Sand" & 
+                                                           
+                                                           tall.columns.no.SS.stats.mass$Time.day == "33", "b",
+                                                         
+                                                         NA)
 )
 
 tall.columns.no.SS.stats.mass
@@ -808,27 +914,27 @@ Letters.tall.Leach.vol
 
 
 tall.columns.no.SS.stats.mass$Vol.diff <-  ifelse(tall.columns.no.SS.stats.mass$Texture == "Clay" & 
-                                                                                             
-                                                  tall.columns.no.SS.stats.mass$Time.day == "33" &
-                                                                                             
-                                                  tall.columns.no.SS.stats.mass$Plant.Influence == "No Plant", "*",
-                                                                                           
-                                            ifelse (tall.columns.no.SS.stats.mass$Texture == "Sand" & 
-                                                                                                     
+                                                    
                                                     tall.columns.no.SS.stats.mass$Time.day == "33" &
-                                                                                                     
-                                                    tall.columns.no.SS.stats.mass$Plant.Influence == "Plant", "*",
-                                                                                                   
-                                                    NA)
+                                                    
+                                                    tall.columns.no.SS.stats.mass$Plant.Influence == "No Plant", "*",
+                                                  
+                                                  ifelse (tall.columns.no.SS.stats.mass$Texture == "Sand" & 
+                                                            
+                                                            tall.columns.no.SS.stats.mass$Time.day == "33" &
+                                                            
+                                                            tall.columns.no.SS.stats.mass$Plant.Influence == "Plant", "*",
+                                                          
+                                                          NA)
 )
 
 tall.columns.no.SS.stats.mass  #####added significance star for leachate volume
-  
+
 
 ##now make factorial combo (eg. clay No Plant)
 
 tall.columns.no.SS.stats.mass$Combo <- paste(tall.columns.no.SS.stats.mass$Texture,
-                                   
+                                             
                                              tall.columns.no.SS.stats.mass$Plant.Influence)
 
 tall.columns.no.SS.stats.mass ##good
@@ -842,28 +948,28 @@ tall.columns.no.SS.stats.mass ##good
 structure.study
 
 structure.study.stats.mass <- summarySE(structure.study, measurevar="cum.TMX.micrg",
-                                   
-                                   groupvars=c("Structure",
-                                               
-                                               "Time.day"), na.rm =TRUE) ## stat summary
+                                        
+                                        groupvars=c("Structure",
+                                                    
+                                                    "Time.day"), na.rm =TRUE) ## stat summary
 
 structure.study.stats.mass
 
 
 structure.study.stats.mass1 <- summarySE(structure.study, measurevar="cum.Leach.vol.mL",
-                                            
-                                            groupvars=c("Structure",
-                                                        
-                                                        "Time.day"), na.rm =TRUE) ##make df out of cum leachate
+                                         
+                                         groupvars=c("Structure",
+                                                     
+                                                     "Time.day"), na.rm =TRUE) ##make df out of cum leachate
 
 structure.study.stats.mass1
 
 
 colnames(structure.study.stats.mass1) <-  c("Structure", "Time.day", "N1",
-                                               
-                                               "cum.Leach.vol.mL", "sd1",
-                                               
-                                               "se1", "ci1")  ##preserve imp common variables and change stats                                                        
+                                            
+                                            "cum.Leach.vol.mL", "sd1",
+                                            
+                                            "se1", "ci1")  ##preserve imp common variables and change stats                                                        
 
 structure.study.stats.mass1
 
@@ -872,24 +978,24 @@ structure.study.stats.mass1
 
 
 structure.study.stats.mass <- merge(structure.study.stats.mass,
-                                       
+                                    
                                     structure.study.stats.mass1,
-                                       
-                                       by = c("Structure", "Time.day"))
+                                    
+                                    by = c("Structure", "Time.day"))
 
 structure.study.stats.mass ## good
 
 
 
 structure.study.stats.mass$Letters <-  ifelse(structure.study.stats.mass$Structure == "NS" & 
-                                           
-                                           structure.study.stats.mass$Time.day == "33", "a",
-                                         
-                                         ifelse (structure.study.stats.mass$Structure == "S" & 
-                                                   
-                                                   structure.study.stats.mass$Time.day == "33", "b",
-                                                 
-                                                 NA)
+                                                
+                                                structure.study.stats.mass$Time.day == "33", "a",
+                                              
+                                              ifelse (structure.study.stats.mass$Structure == "S" & 
+                                                        
+                                                        structure.study.stats.mass$Time.day == "33", "b",
+                                                      
+                                                      NA)
 )
 
 
@@ -911,19 +1017,19 @@ structure.study.stats.mass
 structure.study.stats.mass ####good!
 
 structure.study.stats.mass$Cum.inf.cm <- ifelse(structure.study.stats.mass$Time.day == 3, 0.9,
-                                      ifelse(structure.study.stats.mass$Time.day == 6, 1.8,
-                                        ifelse(structure.study.stats.mass$Time.day == 9, 2.7,
-                                          ifelse(structure.study.stats.mass$Time.day == 12, 3.6,
-                                           ifelse(structure.study.stats.mass$Time.day == 15, 4.5,
-                                            ifelse(structure.study.stats.mass$Time.day == 18, 5.4,
-                                              ifelse(structure.study.stats.mass$Time.day == 21, 6.3,
-                                                ifelse(structure.study.stats.mass$Time.day == 24, 7.2,
-                                                  ifelse(structure.study.stats.mass$Time.day == 27, 8.1,
-                                                    ifelse(structure.study.stats.mass$Time.day == 30, 9,
-                                                      ifelse(structure.study.stats.mass$Time.day == 31, 9.9,
-                                                        ifelse(structure.study.stats.mass$Time.day == 33, 18.9,
-                                                          NA
-))))))))))))
+                                                ifelse(structure.study.stats.mass$Time.day == 6, 1.8,
+                                                       ifelse(structure.study.stats.mass$Time.day == 9, 2.7,
+                                                              ifelse(structure.study.stats.mass$Time.day == 12, 3.6,
+                                                                     ifelse(structure.study.stats.mass$Time.day == 15, 4.5,
+                                                                            ifelse(structure.study.stats.mass$Time.day == 18, 5.4,
+                                                                                   ifelse(structure.study.stats.mass$Time.day == 21, 6.3,
+                                                                                          ifelse(structure.study.stats.mass$Time.day == 24, 7.2,
+                                                                                                 ifelse(structure.study.stats.mass$Time.day == 27, 8.1,
+                                                                                                        ifelse(structure.study.stats.mass$Time.day == 30, 9,
+                                                                                                               ifelse(structure.study.stats.mass$Time.day == 31, 9.9,
+                                                                                                                      ifelse(structure.study.stats.mass$Time.day == 33, 18.9,
+                                                                                                                             NA
+                                                                                                                      ))))))))))))
 
 structure.study.stats.mass
 
@@ -934,29 +1040,29 @@ structure.study.stats.mass
 small.columns
 
 small.columns.stats.mass <- summarySE(small.columns, measurevar="cum.TMX.micrg",
-                                 
-                                 groupvars=c("Texture", "Plant.Influence",
-                                             
-                                             "Time.day"), na.rm =TRUE)
+                                      
+                                      groupvars=c("Texture", "Plant.Influence",
+                                                  
+                                                  "Time.day"), na.rm =TRUE)
 
 
 small.columns.stats.mass
 
 small.columns.stats.mass1 <- summarySE(small.columns,
-                                                                         
+                                       
                                        measurevar="cum.Leach.vol.mL",
-                                                                         
+                                       
                                        groupvars=c("Texture","Plant.Influence",
-                                                                                     
-                                       "Time.day"), na.rm =TRUE) ##make df out of cum leachate
+                                                   
+                                                   "Time.day"), na.rm =TRUE) ##make df out of cum leachate
 
 small.columns.stats.mass1
 
 colnames(small.columns.stats.mass1) <-  c("Texture", "Plant.Influence", "Time.day", "N1",
-                                               
-                                               "cum.Leach.vol.mL", "sd1",
-                                               
-                                               "se1", "ci1")  ##preserve imp common variables and change stats                                                        
+                                          
+                                          "cum.Leach.vol.mL", "sd1",
+                                          
+                                          "se1", "ci1")  ##preserve imp common variables and change stats                                                        
 
 small.columns.stats.mass1
 
@@ -965,27 +1071,27 @@ small.columns.stats.mass1
 
 
 small.columns.stats.mass <- merge(small.columns.stats.mass,
-                                       
+                                  
                                   small.columns.stats.mass1,
-                                       
-                                       by = c("Texture", "Plant.Influence", "Time.day"))
+                                  
+                                  by = c("Texture", "Plant.Influence", "Time.day"))
 
 small.columns.stats.mass ## good
 
 small.columns.stats.mass$Cum.inf.cm <- ifelse(small.columns.stats.mass$Time.day == 3, 0.9,
-                                   ifelse(small.columns.stats.mass$Time.day == 6, 1.8,
-                                    ifelse(small.columns.stats.mass$Time.day == 9, 2.7,
-                                      ifelse(small.columns.stats.mass$Time.day == 12, 3.6,
-                                        ifelse(small.columns.stats.mass$Time.day == 15, 4.5,
-                                         ifelse(small.columns.stats.mass$Time.day == 18, 5.4,
-                                          ifelse(small.columns.stats.mass$Time.day == 21, 6.3,
-                                            ifelse(small.columns.stats.mass$Time.day == 24, 7.2,
-                                              ifelse(small.columns.stats.mass$Time.day == 27, 8.1,
-                                                ifelse(small.columns.stats.mass$Time.day == 30, 9,
-                                                  ifelse(small.columns.stats.mass$Time.day == 31, 9.9,
-                                                    ifelse(small.columns.stats.mass$Time.day == 33, 18.9,
-                                                      NA
-            ))))))))))))
+                                              ifelse(small.columns.stats.mass$Time.day == 6, 1.8,
+                                                     ifelse(small.columns.stats.mass$Time.day == 9, 2.7,
+                                                            ifelse(small.columns.stats.mass$Time.day == 12, 3.6,
+                                                                   ifelse(small.columns.stats.mass$Time.day == 15, 4.5,
+                                                                          ifelse(small.columns.stats.mass$Time.day == 18, 5.4,
+                                                                                 ifelse(small.columns.stats.mass$Time.day == 21, 6.3,
+                                                                                        ifelse(small.columns.stats.mass$Time.day == 24, 7.2,
+                                                                                               ifelse(small.columns.stats.mass$Time.day == 27, 8.1,
+                                                                                                      ifelse(small.columns.stats.mass$Time.day == 30, 9,
+                                                                                                             ifelse(small.columns.stats.mass$Time.day == 31, 9.9,
+                                                                                                                    ifelse(small.columns.stats.mass$Time.day == 33, 18.9,
+                                                                                                                           NA
+                                                                                                                    ))))))))))))
 
 small.columns.stats.mass
 
@@ -1000,10 +1106,502 @@ small.columns.stats.mass
 ##now make factorial combo (eg. clay No Plant)
 
 small.columns.stats.mass$Combo <- paste(small.columns.stats.mass$Texture,
-                                             
+                                        
                                         small.columns.stats.mass$Plant.Influence)
 
 small.columns.stats.mass ##good
+
+
+
+
+
+#######now Stats on Cumualtive ET***************************************************************************
+
+##Tall columns first (no Structure analysis SS)
+
+tall.columns.no.SS.final ##working in df where final event was isolated (looking at cumualtive ET in mm)
+
+
+hist(tall.columns.no.SS.final$ET.cum.mm) ## ~ normal 
+
+qqnorm(structure.study.final$ET.cum.mm) ## ~ normal
+
+qqline(structure.study.final$ET.cum.mm) ## ~ normal
+
+
+
+##just use same analyses as leachate volume for consistency!  ##
+
+tall.columns.no.SS.final$log10.ET.cum.mm <- log10(tall.columns.no.SS.final$ET.cum.mm)## log 10
+
+hist(tall.columns.no.SS.final$log10.ET.cum.mm) ## normal 
+
+qqnorm(tall.columns.no.SS.final$log10.ET.cum.mm) ##  normal
+
+qqline(tall.columns.no.SS.final$log10.ET.cum.mm) ## normal
+
+
+
+boxplot(tall.columns.no.SS.final$log10.ET.cum.mm ~
+          
+          tall.columns.no.SS.final$Texture * tall.columns.no.SS.final$Plant.Influence,
+        
+        ylab = "Cumulative ET (mm)", xlab = "Trt")## 
+
+fligner.test(tall.columns.no.SS.final$log10.ET.cum.mm ~
+               
+               interaction(tall.columns.no.SS.final$Texture, tall.columns.no.SS.final$Plant.Influence)) 
+###HOV met
+
+
+ANOVA.tall.ET <- aov(tall.columns.no.SS.final$log10.ET.cum.mm ~
+                       
+                       tall.columns.no.SS.final$Texture * tall.columns.no.SS.final$Plant.Influence)
+
+summary.tall.ET <- summary(ANOVA.tall.ET)
+
+summary.tall.ET ## texture and plant influence. No interaction 
+
+Tukey.tall.ET <- TukeyHSD(ANOVA.tall.ET)
+
+Tukey.tall.ET
+
+Letters.tall.ET <- multcompLetters4(ANOVA.tall.ET, Tukey.tall.ET)
+
+Letters.tall.ET
+
+#    Plant No Plant 
+#      'a"      "b" 
+
+
+#Sand:Plant Sand:No Plant    Clay:Plant Clay:No Plant           ##ET Sand  significantly >  ET Clay
+#     "a"          "ab"          "ab"           "b" 
+
+
+
+
+
+
+
+########now the structure study***********************************
+
+structure.study.final
+
+boxplot(structure.study.final$ET.cum.mm ~
+          
+          structure.study.final$Structure, ylab = "Cumulative ET (mm)",
+        
+        xlab = "TRT") ## 
+
+hist(structure.study.final$ET.cum.mm) ## normal 
+
+qqnorm(structure.study.final$ET.cum.mmL) ## normal
+
+qqline(structure.study.final$ET.cum.mm) ## normal
+
+bartlett.test(structure.study.final$ET.cum.mm ~ structure.study.final$Structure) ## meets HOV
+
+fligner.test(structure.study.final$ET.cum.mm ~ structure.study.final$Structure) ## meets HOV
+
+levene.test(structure.study.final$ET.cum.mm, structure.study.final$Structure) ## meets HOV
+
+
+
+##########################just use KW test for consistency
+
+kruskal.test(structure.study.final$ET.cum.mm ~ structure.study.final$Structure) ## difference!
+
+
+
+
+
+
+
+#####Now small columns
+
+
+small.columns.final
+
+small.columns.final$log10.ET.cum.mm <- log10(small.columns.final$ET.cum.mm) ##log transform
+
+
+
+
+
+
+fligner.test(small.columns.final$log10.ET.cum.mm ~
+               
+               interaction(small.columns.final$Texture, small.columns.final$Plant.Influence))##HOV met
+
+qqnorm(small.columns.final$log10.ET.cum.mm) ## not normal
+
+qqline(small.columns.final$log10.ET.cum.mm) ## not normal 
+
+hist(small.columns.final$log10.ET.cum.mm)###s
+
+
+ANOVA.small.ET <- aov(small.columns.final$log10.ET.cum.mm ~
+                        
+                        small.columns.final$Texture *
+                        
+                        small.columns.final$Plant.Influence)
+
+summary.small.columns.ET <- summary(ANOVA.small.ET)
+
+summary.small.columns.ET ## no sig
+
+
+Tukey.small.columns.ET <- TukeyHSD(ANOVA.small.ET)
+
+Tukey.small.columns.ET
+
+
+Letters.small.ET <- multcompLetters4(ANOVA.small.ET,Tukey.small.columns.ET)
+
+Letters.small.ET ### all A
+
+
+
+##...maybe try Rank transform anyway
+
+#small.columns.final$rank.ET.cum.mm <- rank(small.columns.final$ET.cum.mm)
+
+#ANOVA.small.ET.rank <- aov(small.columns.final$ET.cum.mm ~
+
+#                                 small.columns.final$Texture *
+
+#                                small.columns.final$Plant.Influence)
+
+#summary.small.columns.ET.rank <- summary(ANOVA.small.ET.rank)
+
+#summary.small.columns.ET.rank ## no sig
+
+####so really doesn't matter what test is used!!! no sig
+
+
+
+
+
+###########more prep for plots************
+
+tall.columns.no.SS
+
+
+tall.columns.no.SS.stats.ET <- summarySE(tall.columns.no.SS, measurevar="ET.cum.mm" ,
+                                         
+                                         groupvars=c("Texture","Plant.Influence",
+                                                     
+                                                     "Time.day"), na.rm =TRUE) ## 
+tall.columns.no.SS.stats.ET
+
+
+#Leachate_full$Leach.Vol.mL[Leach.Vol.mL == 0] <- NA   ###replace 0 with NA in volumne leachate again
+
+#to be compatible with previous plots in"Leachate_full" analysis
+
+tall.columns.no.SS.stats.ET1 <- summarySE(tall.columns.no.SS, measurevar="cum.Leach.vol.mL",
+                                          
+                                          groupvars=c("Texture","Plant.Influence",
+                                                      
+                                                      "Time.day"), na.rm =TRUE) ##make df out of cum leachate
+
+
+colnames(tall.columns.no.SS.stats.ET1) <-  c("Texture", "Plant.Influence", "Time.day", "N1",
+                                             
+                                             "cum.Leach.vol.mL", "sd1",
+                                             
+                                             "se1", "ci1")  ##preserve imp common variables and change stats                                                        
+
+tall.columns.no.SS.stats.ET1
+
+
+##now merge dataframes
+
+
+tall.columns.no.SS.stats.ET <- merge(tall.columns.no.SS.stats.ET,
+                                     
+                                     tall.columns.no.SS.stats.ET1,
+                                     
+                                     by = c("Texture", "Plant.Influence", "Time.day"))
+
+tall.columns.no.SS.stats.ET ## good
+
+
+
+### need to add column with cum.inf.cm
+
+tall.columns.no.SS.stats.ET$Cum.inf.cm <- ifelse(tall.columns.no.SS.stats.ET$Time.day == 3, 0.9,
+                                                 ifelse(tall.columns.no.SS.stats.ET$Time.day == 6, 1.8,
+                                                        ifelse(tall.columns.no.SS.stats.ET$Time.day == 9, 2.7,
+                                                               ifelse(tall.columns.no.SS.stats.ET$Time.day == 12, 3.6,
+                                                                      ifelse(tall.columns.no.SS.stats.ET$Time.day == 15, 4.5,
+                                                                             ifelse(tall.columns.no.SS.stats.ET$Time.day == 18, 5.4,
+                                                                                    ifelse(tall.columns.no.SS.stats.ET$Time.day == 21, 6.3,
+                                                                                           ifelse(tall.columns.no.SS.stats.ET$Time.day == 24, 7.2,
+                                                                                                  ifelse(tall.columns.no.SS.stats.ET$Time.day == 27, 8.1,
+                                                                                                         ifelse(tall.columns.no.SS.stats.ET$Time.day == 30, 9,
+                                                                                                                ifelse(tall.columns.no.SS.stats.ET$Time.day == 31, 9.9,
+                                                                                                                       ifelse(tall.columns.no.SS.stats.ET$Time.day == 33, 18.9,
+                                                                                                                              NA
+                                                                                                                       ))))))))))))
+
+
+
+
+tall.columns.no.SS.stats.ET
+
+Letters.tall.ET
+
+#Sand:Plant Sand:No Plant    Clay:Plant Clay:No Plant           ##ET Sand  significantly >  ET Clay
+#     "a"          "ab"          "ab"           "b" 
+
+##add sig letters for ETfrom above^^^^
+
+tall.columns.no.SS.stats.ET$Letters <-  ifelse(tall.columns.no.SS.stats.ET$Texture == "Clay" & 
+                                                 
+                                                 tall.columns.no.SS.stats.ET$Time.day == "33" &
+                                                 
+                                                 tall.columns.no.SS.stats.ET$Plant.Influence == "No Plant", "b",
+                                               
+                                               ifelse(tall.columns.no.SS.stats.ET$Texture == "Sand" & 
+                                                        
+                                                        tall.columns.no.SS.stats.ET$Time.day == "33" &
+                                                        
+                                                        tall.columns.no.SS.stats.ET$Plant.Influence == "Plant", "a",
+                                                      
+                                                      ifelse(tall.columns.no.SS.stats.ET$Texture == "Clay" & 
+                                                               
+                                                               tall.columns.no.SS.stats.ET$Time.day == "33" &
+                                                               
+                                                               tall.columns.no.SS.stats.ET$Plant.Influence == "Plant", "ab",
+                                                             
+                                                             ifelse(tall.columns.no.SS.stats.ET$Texture == "Sand" & 
+                                                                      
+                                                                      tall.columns.no.SS.stats.ET$Time.day == "33" &
+                                                                      
+                                                                      tall.columns.no.SS.stats.ET$Plant.Influence == "No Plant", "ab",
+                                                                    
+                                                                    NA)
+                                                      )))
+
+tall.columns.no.SS.stats.ET                                               
+
+###add sig to Leachate Volume                                               
+
+Letters.tall.Leach.vol
+
+##Clay:No Plant    Clay:Plant Sand:No Plant    Sand:Plant 
+##"a"          "ab"          "ab"           "b"
+
+
+tall.columns.no.SS.stats.ET$Vol.diff <-  ifelse(tall.columns.no.SS.stats.ET$Texture == "Clay" & 
+                                                  
+                                                  tall.columns.no.SS.stats.ET$Time.day == "33" &
+                                                  
+                                                  tall.columns.no.SS.stats.ET$Plant.Influence == "No Plant", "*",
+                                                
+                                                ifelse (tall.columns.no.SS.stats.ET$Texture == "Sand" & 
+                                                          
+                                                          tall.columns.no.SS.stats.ET$Time.day == "33" &
+                                                          
+                                                          tall.columns.no.SS.stats.ET$Plant.Influence == "Plant", "*",
+                                                        
+                                                        NA)
+)
+
+
+tall.columns.no.SS.stats.ET
+
+
+##now make factorial combo (eg. clay No Plant)
+
+tall.columns.no.SS.stats.ET$Combo <- paste(tall.columns.no.SS.stats.ET$Texture,
+                                           
+                                           tall.columns.no.SS.stats.ET$Plant.Influence)
+
+tall.columns.no.SS.stats.ET ##good
+
+
+
+
+
+
+
+
+
+#########now structure study
+
+structure.study
+
+structure.study.stats.ET <- summarySE(structure.study, measurevar="ET.cum.mm",
+                                      
+                                      groupvars=c("Structure",
+                                                  
+                                                  "Time.day"), na.rm =TRUE) ## stat summary
+
+structure.study.stats.ET
+
+
+structure.study.stats.ET1 <- summarySE(structure.study, measurevar="cum.Leach.vol.mL",
+                                       
+                                       groupvars=c("Structure",
+                                                   
+                                                   "Time.day"), na.rm =TRUE) ##make df out of cum leachate
+
+structure.study.stats.ET1
+
+
+colnames(structure.study.stats.ET1) <-  c("Structure", "Time.day", "N1",
+                                          
+                                          "cum.Leach.vol.mL", "sd1",
+                                          
+                                          "se1", "ci1")  ##preserve imp common variables and change stats                                                        
+
+structure.study.stats.ET1
+
+
+##now merge dataframes
+
+
+structure.study.stats.ET <- merge(structure.study.stats.ET,
+                                  
+                                  structure.study.stats.ET1,
+                                  
+                                  by = c("Structure", "Time.day"))
+
+structure.study.stats.ET ## good
+
+
+
+structure.study.stats.ET$Letters <-  ifelse(structure.study.stats.ET$Structure == "NS" & 
+                                              
+                                              structure.study.stats.ET$Time.day == "33", "a",
+                                            
+                                            ifelse (structure.study.stats.ET$Structure == "S" & 
+                                                      
+                                                      structure.study.stats.ET$Time.day == "33", "b",
+                                                    
+                                                    NA)
+)
+
+
+structure.study.stats.ET$Vol.diff <- ifelse(structure.study.stats.ET$Structure == "NS" & 
+                                              
+                                              structure.study.stats.ET$Time.day == "33", "*",
+                                            
+                                            ifelse (structure.study.stats.ET$Structure == "S" & 
+                                                      
+                                                      structure.study.stats.ET$Time.day == "33", "*",
+                                                    
+                                                    NA)
+)
+
+structure.study.stats.ET
+
+###added sig for Volume with *
+
+structure.study.stats.ET ####good!
+
+structure.study.stats.ET$Cum.inf.cm <- ifelse(structure.study.stats.ET$Time.day == 3, 0.9,
+                                              ifelse(structure.study.stats.ET$Time.day == 6, 1.8,
+                                                     ifelse(structure.study.stats.ET$Time.day == 9, 2.7,
+                                                            ifelse(structure.study.stats.ET$Time.day == 12, 3.6,
+                                                                   ifelse(structure.study.stats.ET$Time.day == 15, 4.5,
+                                                                          ifelse(structure.study.stats.ET$Time.day == 18, 5.4,
+                                                                                 ifelse(structure.study.stats.ET$Time.day == 21, 6.3,
+                                                                                        ifelse(structure.study.stats.ET$Time.day == 24, 7.2,
+                                                                                               ifelse(structure.study.stats.ET$Time.day == 27, 8.1,
+                                                                                                      ifelse(structure.study.stats.ET$Time.day == 30, 9,
+                                                                                                             ifelse(structure.study.stats.ET$Time.day == 31, 9.9,
+                                                                                                                    ifelse(structure.study.stats.ET$Time.day == 33, 18.9,
+                                                                                                                           NA
+                                                                                                                    ))))))))))))
+
+structure.study.stats.ET
+
+
+
+
+
+
+#######now small columns
+
+small.columns
+
+small.columns.stats.ET <- summarySE(small.columns, measurevar="ET.cum.mm",
+                                    
+                                    groupvars=c("Texture", "Plant.Influence",
+                                                
+                                                "Time.day"), na.rm =TRUE)
+
+
+small.columns.stats.ET
+
+small.columns.stats.ET1 <- summarySE(small.columns,
+                                     
+                                     measurevar="cum.Leach.vol.mL",
+                                     
+                                     groupvars=c("Texture","Plant.Influence",
+                                                 
+                                                 "Time.day"), na.rm =TRUE) ##make df out of cum leachate
+
+small.columns.stats.ET1
+
+colnames(small.columns.stats.ET1) <-  c("Texture", "Plant.Influence", "Time.day", "N1",
+                                        
+                                        "cum.Leach.vol.mL", "sd1",
+                                        
+                                        "se1", "ci1")  ##preserve imp common variables and change stats                                                        
+
+small.columns.stats.ET1
+
+
+##now merge dataframes
+
+
+small.columns.stats.ET <- merge(small.columns.stats.ET,
+                                
+                                small.columns.stats.ET1,
+                                
+                                by = c("Texture", "Plant.Influence", "Time.day"))
+
+small.columns.stats.ET ## good
+
+small.columns.stats.ET$Cum.inf.cm <- ifelse(small.columns.stats.ET$Time.day == 3, 0.9,
+                                            ifelse(small.columns.stats.ET$Time.day == 6, 1.8,
+                                                   ifelse(small.columns.stats.ET$Time.day == 9, 2.7,
+                                                          ifelse(small.columns.stats.ET$Time.day == 12, 3.6,
+                                                                 ifelse(small.columns.stats.ET$Time.day == 15, 4.5,
+                                                                        ifelse(small.columns.stats.ET$Time.day == 18, 5.4,
+                                                                               ifelse(small.columns.stats.ET$Time.day == 21, 6.3,
+                                                                                      ifelse(small.columns.stats.ET$Time.day == 24, 7.2,
+                                                                                             ifelse(small.columns.stats.ET$Time.day == 27, 8.1,
+                                                                                                    ifelse(small.columns.stats.ET$Time.day == 30, 9,
+                                                                                                           ifelse(small.columns.stats.ET$Time.day == 31, 9.9,
+                                                                                                                  ifelse(small.columns.stats.ET$Time.day == 33, 18.9,
+                                                                                                                         NA
+                                                                                                                  ))))))))))))
+
+small.columns.stats.ET
+
+Letters.small.ET 
+
+##### all = "a"
+
+small.columns.stats.ET$Letters <- ifelse(small.columns.stats.ET$Time.day == "33", "a", NA)
+
+small.columns.stats.ET
+
+##now make factorial combo (eg. clay No Plant)
+
+small.columns.stats.ET$Combo <- paste(small.columns.stats.ET$Texture,
+                                      
+                                      small.columns.stats.ET$Plant.Influence)
+
+small.columns.stats.ET ##good
+
+
+
 
 
 ##make or insert dataframe that has "stairstep" rainfall
@@ -1054,9 +1652,549 @@ f <- readPNG("C:/Users/Jesse/Desktop/Neonicotinoids_15/Pics/leachate_pic_f.png")
 
 #######################################################################
 
+#######plotting a CUmualtive ET (mm) vs t seems most appropriate
+####keep the same the theme with cumulative rainfall on inverse y axis
+
+
+
+##actually, shoulf probably convert ET to cm to be consistent with rainfall on iverse y
+
+##tall columns
+tall.columns.no.SS.stats.ET$ET.cum.cm <- tall.columns.no.SS.stats.ET$ET.cum.mm/10
+
+tall.columns.no.SS.stats.ET$se.cm <- tall.columns.no.SS.stats.ET$se/10
+
+tall.columns.no.SS.stats.ET$sd.cm <- tall.columns.no.SS.stats.ET$sd/10
+
+
+##tall columns + structure study
+structure.study.stats.ET$ET.cum.cm <- structure.study.stats.ET$ET.cum.mm/10
+
+structure.study.stats.ET$se.cm <- structure.study.stats.ET$se/10
+
+structure.study.stats.ET$sd.cm <- structure.study.stats.ET$sd/10
+
+
+##small columns
+
+small.columns.stats.ET$ET.cum.cm <- small.columns.stats.ET$ET.cum.mm/10
+
+small.columns.stats.ET$se.cm <- small.columns.stats.ET$se/10
+
+small.columns.stats.ET$sd.cm <- small.columns.stats.ET$sd/10
+
+
+
+
+####lets add in leachate volume as cm also... volume (mL)/area(cm)
+
+###remember that: se <- SE for ET (mm)
+#                 se1 <- SE for cumulative leachate volume (mL)
+#                 se.cm <- SE for ET (cm)
+#                 se1.cm <- SE for cumulative leachate volume (cm)
+
+
+##tall columns
+tall.columns.no.SS.stats.ET$cum.Leach.cm <- tall.columns.no.SS.stats.ET$cum.Leach.vol.mL/area
+
+tall.columns.no.SS.stats.ET$se1.cm <- tall.columns.no.SS.stats.ET$se1/area
+
+##tall columns + structure study
+structure.study.stats.ET$cum.Leach.cm <- structure.study.stats.ET$cum.Leach.vol.mL/area
+
+structure.study.stats.ET$se1.cm <- structure.study.stats.ET$se1/area
+
+##small columns
+
+small.columns.stats.ET$cum.Leach.cm <- small.columns.stats.ET$cum.Leach.vol.mL/area
+
+small.columns.stats.ET$se1.cm <- small.columns.stats.ET$se/10
+
+
+
+####get cumulative ET and ET rate (daily) for table in paper
+
+#isolate day 33
+
+#tall columns w/oit structureless trt
+ET.table.tall <- tall.columns.no.SS.stats.ET[tall.columns.no.SS.stats.ET$Time.day == 33,]
+
+ET.table.tall$ET.rate.cm <- ET.table.tall$ET.cum.cm/33
+
+ET.table.tall$ET.rate.cm.se <- ET.table.tall$se.cm/33
+
+ET.table.tall$ET.rate.cm.sd <- ET.table.tall$sd.cm/33
+
+#export to an excel file
+
+write.xlsx(ET.table.tall , "C:/Users/Jesse/Desktop/Neonicotinoids_15/Data/Column-Study/Raw-Data-Outputs/ET.table.tall.xlsx")
+
+
+
+
+#structure study
+
+structure.study.stats.ET
+
+ET.table.structure <- structure.study.stats.ET[structure.study.stats.ET$Time.day == 33,]  
+
+ET.table.structure$ET.rate.cm <- ET.table.structure$ET.cum.cm/33
+
+ET.table.structure$ET.rate.cm.se <- ET.table.structure$se.cm/33
+
+ET.table.structure$ET.rate.cm.sd <- ET.table.structure$sd.cm/33
+
+#export to an excel file
+
+write.xlsx(ET.table.structure , "C:/Users/Jesse/Desktop/Neonicotinoids_15/Data/Column-Study/Raw-Data-Outputs/ET.table.structure.xlsx")
+
+
+
+
+
+
+ET.table.small <- small.columns.stats.ET[small.columns.stats.ET$Time.day == 33,]
+
+ET.table.small$ET.rate.cm <- ET.table.small$ET.cum.cm/33
+
+ET.table.small$ET.rate.cm.se <- ET.table.small$se.cm/33
+
+ET.table.small$ET.rate.cm.sd <- ET.table.small$sd.cm/33
+
+#export to an excel file
+
+write.xlsx(ET.table.small, "C:/Users/Jesse/Desktop/Neonicotinoids_15/Data/Column-Study/Raw-Data-Outputs/ET.table.small.xlsx")
+
+
+
+###make a P-ET figure to show how much ET tapped into storage per treatment through time
+
+
+P.minus.ET.rain <- read.csv("C:/Users/Jesse/Desktop/Neonicotinoids_15/Data/Column-Study/Raw-Data-Outputs/cum.rain.for.P-ET.csv")
+
+attach(P.minus.ET.rain)
+
+P.minus.ET.rain
+
+
+
+
+
+
+
+###first isolate each treatment's et rate in cm day^-1
+
+tall.clay.no.plants.et.rate <- subset(ET.table.tall, Texture == "Clay" &         ##tall clay no plant
+                                        
+                                        Plant.Influence == "No Plant", ET.rate.cm)
+tall.clay.no.plants.et.rate 
+
+tall.clay.plants.et.rate <- subset(ET.table.tall, Texture == "Clay" &         ##tall clay plant
+                                        
+                                        Plant.Influence == "Plant", ET.rate.cm)
+tall.clay.plants.et.rate
+
+tall.sand.no.plants.et.rate <- subset(ET.table.tall, Texture == "Sand" &      ##tall Sand no plant
+                                     
+                                     Plant.Influence == "No Plant", ET.rate.cm)
+tall.sand.no.plants.et.rate
+
+tall.sand.plants.et.rate <- subset(ET.table.tall, Texture == "Sand" &       ##tall Sand plant
+                                        
+                                        Plant.Influence == "Plant", ET.rate.cm)
+tall.sand.plants.et.rate 
+
+tall.structure.et.rate <- subset(ET.table.structure, Structure == "S", ET.rate.cm)  ##tall structure
+
+tall.structure.et.rate
+
+tall.no.structure.et.rate <- subset(ET.table.structure, Structure == "NS", ET.rate.cm)  ##tall  no structure
+
+tall.no.structure.et.rate
+
+###now small columns
+
+small.clay.no.plants.et.rate <- subset(ET.table.small, Texture == "Clay" &         ##tall clay no plant
+                                        
+                                        Plant.Influence == "No Plant", ET.rate.cm)
+small.clay.no.plants.et.rate 
+
+small.clay.plants.et.rate <- subset(ET.table.small, Texture == "Clay" &         ##tall clay plant
+                                     
+                                     Plant.Influence == "Plant", ET.rate.cm)
+small.clay.plants.et.rate
+
+small.sand.no.plants.et.rate <- subset(ET.table.small, Texture == "Sand" &      ##tall Sand no plant
+                                        
+                                        Plant.Influence == "No Plant", ET.rate.cm)
+small.sand.no.plants.et.rate
+
+small.sand.plants.et.rate <- subset(ET.table.small, Texture == "Sand" &       ##tall Sand plant
+                                     
+                                     Plant.Influence == "Plant", ET.rate.cm)
+small.sand.plants.et.rate
+
+
+####calcualte ET, P-ET from calculated et rate above ^^^ in tables(cm/day)
+
+
+
+
+##assign et rates to treatments
+
+##again we are assuming that the rate stayed constant throughout exp
+
+
+
+##nested ifelse()????
+
+
+
+P.minus.ET.rain$et_cm.d <- ifelse(P.minus.ET.rain$Size_cm == "60" & P.minus.ET.rain$Texture == "Clay" &         ##tall clay no plant
+         
+                                  P.minus.ET.rain$Plant.Influence == "No Plant", tall.clay.no.plants.et.rate,
+         
+                           ifelse(P.minus.ET.rain$Size_cm == "60" & P.minus.ET.rain$Texture == "Clay" &         ##tall clay no plant
+                                     
+                                  P.minus.ET.rain$Plant.Influence == "Plant", tall.clay.plants.et.rate,
+                                  
+                           ifelse(P.minus.ET.rain$Size_cm == "60" & P.minus.ET.rain$Texture == "Sand" &         ##tall clay no plant
+                                     
+                                     P.minus.ET.rain$Plant.Influence == "No Plant", tall.sand.no.plants.et.rate,
+                                  
+                           ifelse(P.minus.ET.rain$Size_cm == "60" & P.minus.ET.rain$Texture == "Sand" &         ##tall clay no plant
+                                    
+                                    P.minus.ET.rain$Plant.Influence == "Plant", tall.sand.plants.et.rate,
+                                  
+                                  
+                                  
+                           
+                                  
+                            ifelse(P.minus.ET.rain$Structure == "NS", tall.no.structure.et.rate,
+                                  
+                                  
+                                    
+                                    
+                                  
+                                  
+                                  
+                           ifelse(P.minus.ET.rain$Size_cm == "20" & P.minus.ET.rain$Texture == "Clay" &         ##tall clay no plant
+                                    
+                                    P.minus.ET.rain$Plant.Influence == "No Plant", small.clay.no.plants.et.rate,
+                                  
+                           ifelse(P.minus.ET.rain$Size_cm == "20" & P.minus.ET.rain$Texture == "Clay" &         ##tall clay no plant
+                                    
+                                    P.minus.ET.rain$Plant.Influence == "Plant", small.clay.plants.et.rate,
+                                  
+                           ifelse(P.minus.ET.rain$Size_cm == "20" & P.minus.ET.rain$Texture == "Sand" &         ##tall clay no plant
+                                    
+                                    P.minus.ET.rain$Plant.Influence == "No Plant", small.sand.no.plants.et.rate,
+                                  
+                           ifelse(P.minus.ET.rain$Size_cm == "20" & P.minus.ET.rain$Texture == "Sand" &         ##tall clay no plant
+                                    
+                                    P.minus.ET.rain$Plant.Influence == "Plant", small.sand.plants.et.rate,
+                                  
+                                  NA)
+        ))))))))
+
+
+View(P.minus.ET.rain)
+
+
+##wtf why is the NS trt not accepting the rate?????? 
+###no idea why...
+
+###append/fix manually?
+
+
+###but this works ... only works if you make NA missing in excel file. Whatever
+P.minus.ET.rain[P.minus.ET.rain$Structure == "NS",7] <- tall.no.structure.et.rate
+
+
+
+
+
+
+####now calculate ET
+
+P.minus.ET.rain$ET <- as.numeric(P.minus.ET.rain$et_cm.d) * P.minus.ET.rain$time.day 
+
+##had to use as.numeric()....it treats that column as a factor??
+
+P.minus.ET.rain
+
+
+
+##P-ET
+
+P.minus.ET.rain$P.ET <- P.minus.ET.rain$P.cm - P.minus.ET.rain$ET
+
+View(P.minus.ET.rain)
+
+##good
+
+
+
+####subset for plots
+
+###tall no structure study
+
+tall.columns.P.minus.ET <- P.minus.ET.rain[P.minus.ET.rain$Size_cm == "60", ]
+
+tall.columns.P.minus.ET <- subset(tall.columns.P.minus.ET, Structure == "S" | Texture == "Sand")
+
+tall.columns.P.minus.ET
+
+###probably want to make a texture/plant influence combo...makes graphing easier in ggplot
+
+tall.columns.P.minus.ET$Combo <- paste(tall.columns.P.minus.ET$Texture, tall.columns.P.minus.ET$Plant.Influence)
+
+tall.columns.P.minus.ET
+
+
+##tall strcuture study included
+
+structure.study.P.minus.ET <- subset(P.minus.ET.rain, Size_cm == "60" &
+                            
+                            Structure == "S" |
+                            
+                            Structure == "NS")
+
+
+structure.study.P.minus.ET
+
+
+##small columns
+
+small.columns.P.minus.ET <- P.minus.ET.rain[P.minus.ET.rain$Size_cm == "20", ]
+
+small.columns.P.minus.ET
+
+###probably want to make a texture/plant influence combo...makes graphing easier in ggplot
+
+small.columns.P.minus.ET$Combo <- paste(small.columns.P.minus.ET$Texture, small.columns.P.minus.ET$Plant.Influence)
+
+small.columns.P.minus.ET
+
+
+
+
+
+
 
 
 ######now start plotting!!!!!!!!
+cleanup <- theme(panel.grid.major = element_blank(),
+                 panel.grid.minor = element_blank(),
+                 panel.background =  element_blank(),
+                 axis.line = element_line(color = "black"))
+
+###try getting P-ET figure set up############################################################################
+
+tall.columns.P.minus.ET.graph  <- ggplot(tall.columns.P.minus.ET, aes(x = time.day,
+                                                                      
+                                                                      y = P.ET,
+                                                                      
+                                                                      ymin = -5,
+                                                                      
+                                                                      ymax = 11.5
+                                                                      
+                                                                      
+                                                    )) +
+  
+  geom_line(size = 1, aes(linetype = Combo, color = Combo)) + ###linesize = 1, linetype = 2
+  
+  scale_linetype_manual(name = "",
+                        
+                        values = c(2, 1, 2, 1),
+                        
+                        labels = c("Clay, No Plant", "Clay, Plant",
+                                   
+                                   "Sand, No Plant", "Sand, Plant")) +
+  
+  scale_color_manual(name = "",
+                     
+                     values = c('red3', "red3", 'blue1','blue1'), 
+                     
+                     labels = c("Clay, No Plant", "Clay, Plant",
+                                
+                                "Sand, No Plant", "Sand, Plant")) +
+  
+  ylab("P-ET (cm)") +
+  
+  scale_y_continuous(#breaks = c(-5, 0, 5, 10),
+                     
+                     expand = c(0,0), trans="reverse", position = "right") +
+  
+  
+  theme_classic() +
+  
+  theme(plot.margin = unit(c(6,17,-33,54), units="points"),
+        
+        axis.title.y = element_text(vjust = 0.3, size = 12, face = "bold", hjust = 0.5),
+        
+        axis.text.y = element_text(size = 15),
+        
+        panel.border = element_rect(color = "black",
+                                    
+                                    fill = NA, size = 3),
+        
+        axis.ticks.y = element_line(size = 1, color = "black"),
+        
+        legend.margin = margin(0, 7, 10, 1, "point"), ##remove margin on legend
+        
+        legend.text = element_text( size = 16),  #size = 16
+        
+        legend.position = c(0.43, 0.15),
+        
+        legend.key=element_blank(),  ##removed gray border around legend symbols
+        
+        legend.key.size = unit(10, "mm"),
+        
+        legend.background = element_rect(color = "black", size = 1),
+        
+        legend.key.height = unit(7, "mm"),
+        
+        legend.key.width = unit(9, "mm"),
+        
+        #                                         legend.box.spacing = unit(10, "mm"),
+        
+        legend.text.align = 0,
+        
+        legend.direction = "horizontal")
+  
+        #axis.title.y = element_text(vjust = 1.5, hjust = 2.5))
+
+
+
+
+tall.columns.P.minus.ET.graph
+
+Leach.tall.TMX.ppb.graph.with.ET <- ggplot(tall.columns.no.SS.stats, aes(Time.day, TMX_PPB,
+                                                                      
+                                                                      shape = Combo,
+                                                                      
+                                                                      ymax= TMX_PPB + se,
+                                                                      
+                                                                      xmax = Time.day)) + ##use colour or shape to add in factor
+  
+  geom_point(aes( shape = Combo, color = Combo, size = Combo, stroke = 1.5)) +
+  
+  geom_errorbar(aes(ymin = TMX_PPB - se, ymax = TMX_PPB + se)) +
+  
+  xlab("") +
+  
+  ylab(expression(TMX ~ (mu * g ~ L^{-1}))) +
+  
+  scale_shape_manual(name = "",
+                     
+                     values = c(1, 19, 1, 19),
+                     
+                     labels = c("Clay, No Plant", "Clay, Plant",
+                                
+                                "Sand, No Plant", "Sand, Plant")) +
+  
+  scale_color_manual(name = "",
+                     
+                     values = c('red3', "red3", 'blue1','blue1'), 
+                     
+                     labels = c("Clay, No Plant", "Clay, Plant",
+                                
+                                "Sand, No Plant", "Sand, Plant")) +
+  
+  scale_size_manual(name = "",
+                    
+                    values = c(3.5, 3.5, 3.5, 3.5),
+                    
+                    labels = c("Clay, No Plant", "Clay, Plant",
+                               
+                               "Sand, No Plant", "Sand, Plant")) +
+  
+  geom_text(aes(label = Letters, y = TMX_PPB, fontface = "italic"),
+            
+            position = position_dodge(width=2.5),
+            
+            hjust= 2.2, vjust = -1) +  #####add in signficance letter--adjusted for errror bars
+  
+  cleanup +
+  
+  theme(plot.margin = unit(c(-1,46.5,1,2), units="points"), ##good legend size
+        
+        #                                       panel.border = element_rect(color = "black",
+        
+        #                                                                 fill = NA, size = 1.75),
+        
+        axis.text.y = element_text(size = 16),  ## change font size of y axis
+        
+        axis.title.y = element_text(size = 16),
+        
+        axis.text.x = element_text(size = 16),  ## change font size of y axis
+        
+        axis.title.x = element_text(size = 16),
+        
+        legend.margin = margin(0, 7, 10, 1, "point"), ##remove margin on legend
+        
+        legend.text = element_text( size = 16),
+        
+         legend.position = c(0.43, 0.95), #c(0.425, 0.75)
+        
+        legend.key=element_blank(),  ##removed gray border around legend symbols
+        
+        legend.key.size = unit(10, "mm"),
+        
+        legend.background = element_rect(color = "black", size = 1),
+        
+        legend.key.height = unit(7, "mm"),
+        
+        legend.key.width = unit(9, "mm"),
+        
+        #                                         legend.box.spacing = unit(10, "mm"),
+        
+        legend.text.align = 0,
+        
+        legend.direction = "horizontal",
+        
+        axis.line.x = element_line(color = "black", size = 1.75),
+        
+        
+        axis.ticks.x= element_line(size = 1.75, color = "black"),
+        
+        axis.line.y = element_line(color = "black", size = 1.75),
+        
+        axis.ticks.y = element_line(size = 1.75, color = "black"),
+        
+        axis.ticks.length = unit(2, "mm")) +
+  
+  ## add secondary axis to bottom plot and remove ticks
+  
+  scale_y_continuous(sec.axis = sec_axis(~. * 1, labels = NULL,
+                                         
+                                         breaks = c(18)))
+
+Leach.tall.TMX.ppb.graph.with.ET
+
+
+
+
+Leach.tall.TMX.ppb.graph.comb.with.ET <- grid.arrange(tall.columns.P.minus.ET.graph, Leach.tall.TMX.ppb.graph.with.ET,
+                                                   
+                                                   heights = c(1/4, 3/4))
+
+Leach.tall.TMX.ppb.graph.comb.with.ET
+
+
+Leach.tall.TMX.ppb.graph.with.ET
+pdf("C:/Users/Jesse/Desktop/Neonicotinoids_15/Data/Column-Study/Raw-Data-Outputs/Leach.tall.TMX.ppb.graph.with.ET.pdf")
+dev.off()
+
+ggsave(file = "C:/Users/Jesse/Desktop/Neonicotinoids_15/Data/Column-Study/Raw-Data-Outputs/Leach.tall.TMX.ppb.graph.comb.with.ET.pdf", Leach.tall.TMX.ppb.graph.comb.with.ET)
+
+
+
+
+
+
+
 
 
 
@@ -1064,10 +2202,7 @@ f <- readPNG("C:/Users/Jesse/Desktop/Neonicotinoids_15/Pics/leachate_pic_f.png")
 
 ####TMX_ppb- Tall columns#################################################################################
 
-cleanup <- theme(panel.grid.major = element_blank(),
-                 panel.grid.minor = element_blank(),
-                 panel.background =  element_blank(),
-                 axis.line = element_line(color = "black"))
+
 
 tall.columns.no.SS.stats
 
@@ -1121,6 +2256,8 @@ Leach.tall.TMX.ppb.graph <- ggplot(tall.columns.no.SS.stats, aes(Time.day, TMX_P
                                    xlab("Time (d)") +
                                      
                                    ylab(TMX ~ (ng~mL^{-1})) +
+  
+                                   #scale_y_log10() +
                                  
                                    scale_shape_manual(name = "",
                                      
@@ -1197,16 +2334,17 @@ Leach.tall.TMX.ppb.graph <- ggplot(tall.columns.no.SS.stats, aes(Time.day, TMX_P
     
                                          axis.ticks.y = element_line(size = 1.75, color = "black"),
 
-                                         axis.ticks.length = unit(2, "mm")) +
+                                         axis.ticks.length = unit(2, "mm")) 
          
                                       ## add secondary axis to bottom plot and remove ticks
+                                     
 
-                                    scale_y_continuous(sec.axis = sec_axis(~. * 1, labels = NULL,
+                                    #scale_y_continuous(sec.axis = sec_axis(~. * 1, labels = NULL,
                                                                            
-                                                                           breaks = c(18)))
+  #                                      breaks = c(18)))
                                                                            
                                                                            
-?theme
+
 
 
                                                                          
@@ -1224,13 +2362,13 @@ Leach.tall.TMX.ppb.graph.comb <- grid.arrange(Leach.tall.TMX.ppb.inf, Leach.tall
 Leach.tall.TMX.ppb.graph.comb
 
 
-pdf("C:/Users/Jesse/Desktop/Neonicotinoids_15/Data/Column-Study/Raw-Data-Outputs/Leach.tall.TMX.ppb.graph.pdf")                                                          
-Leach.tall.TMX.ppb.graph  
-dev.off()
+#pdf("C:/Users/Jesse/Desktop/Neonicotinoids_15/Data/Column-Study/Raw-Data-Outputs/Leach.tall.TMX.ppb.graph.pdf")                                                          
+#Leach.tall.TMX.ppb.graph  
+#dev.off()
 
 
 ###have to use ggsave for grid obsjects
-ggsave(file = "C:/Users/Jesse/Desktop/Neonicotinoids_15/Data/Column-Study/Raw-Data-Outputs/Leach.tall.TMX.ppb.graph.comb.pdf", Leach.tall.TMX.ppb.graph.comb)
+#ggsave(file = "C:/Users/Jesse/Desktop/Neonicotinoids_15/Data/Column-Study/Raw-Data-Outputs/Leach.tall.TMX.ppb.graph.comb.pdf", Leach.tall.TMX.ppb.graph.comb)
 
 
 
@@ -1289,6 +2427,8 @@ Leach.small.TMX.ppb.graph <- ggplot(small.columns.stats, aes(Time.day, TMX_PPB,
   xlab("Time (d)") +
   
   ylab(TMX ~ (ng~mL^{-1})) +
+  
+  scale_y_log10() +
   
   scale_shape_manual(name = "",
                      
@@ -1375,13 +2515,13 @@ Leach.small.TMX.ppb.graph <- ggplot(small.columns.stats, aes(Time.day, TMX_PPB,
         
         axis.ticks.length = unit(2, "mm"),
         
-        axis.title.y.right = element_text(size = 14)) +
+        axis.title.y.right = element_text(size = 14)) 
   
   ## add secondary axis to bottom plot and remove ticks
   
-  scale_y_continuous(sec.axis = sec_axis(~. * 1, labels = NULL,
+  #scale_y_continuous(sec.axis = sec_axis(~. * 1, labels = NULL,
                                          
-                                         breaks = c(85)))
+   #                                      breaks = c(85)))
 
 Leach.small.TMX.ppb.graph
 
@@ -1398,13 +2538,13 @@ Leach.small.TMX.ppb.graph.comb
 
 ?theme()
 
-pdf("C:/Users/Jesse/Desktop/Neonicotinoids_15/Data/Column-Study/Raw-Data-Outputs/Leach.small.TMX.ppb.graph.pdf")                                                          
+#pdf("C:/Users/Jesse/Desktop/Neonicotinoids_15/Data/Column-Study/Raw-Data-Outputs/Leach.small.TMX.ppb.graph.pdf")                                                          
 Leach.small.TMX.ppb.graph  
 dev.off()
 
 
 ###have to use ggsave for grid obsjects
-ggsave(file = "C:/Users/Jesse/Desktop/Neonicotinoids_15/Data/Column-Study/Raw-Data-Outputs/Leach.small.TMX.ppb.graph.comb.pdf", Leach.small.TMX.ppb.graph.comb)
+#ggsave(file = "C:/Users/Jesse/Desktop/Neonicotinoids_15/Data/Column-Study/Raw-Data-Outputs/Leach.small.TMX.ppb.graph.comb.pdf", Leach.small.TMX.ppb.graph.comb)
 
 
 
@@ -1475,6 +2615,8 @@ structure.study.TMX.ppb.graph <- ggplot(structure.study.stats, aes(Time.day, TMX
   
   ylab(TMX ~ (ng~mL^{-1})) +
   
+  scale_y_log10() +
+  
   scale_shape_manual(name = "",
                      
                      values = c(1, 19),
@@ -1544,13 +2686,13 @@ structure.study.TMX.ppb.graph <- ggplot(structure.study.stats, aes(Time.day, TMX
         
         axis.ticks.y = element_line(size = 1.75, color = "black"),
         
-        axis.ticks.length = unit(2, "mm")) +
+        axis.ticks.length = unit(2, "mm")) 
   
   ## add secondary axis to bottom plot and remove ticks
   
-  scale_y_continuous(sec.axis = sec_axis(~. * 1, labels = NULL,
+  #scale_y_continuous(sec.axis = sec_axis(~. * 1, labels = NULL,
                                          
-                                         breaks = c(18)))
+                                         #breaks = c(18)))
 
 structure.study.TMX.ppb.graph
 
@@ -1563,13 +2705,13 @@ structure.study.TMX.ppb.graph.comb
 
 
 
-pdf("C:/Users/Jesse/Desktop/Neonicotinoids_15/Data/Column-Study/Raw-Data-Outputs/structure.study.TMX.ppb.graph.pdf")                                                          
+#pdf("C:/Users/Jesse/Desktop/Neonicotinoids_15/Data/Column-Study/Raw-Data-Outputs/structure.study.TMX.ppb.graph.pdf")                                                          
 structure.study.TMX.ppb.graph 
 dev.off()
 
 
 ###have to use ggsave for grid obsjects
-ggsave(file = "C:/Users/Jesse/Desktop/Neonicotinoids_15/Data/Column-Study/Raw-Data-Outputs/structure.study.TMX.ppb.graph.comb.pdf", structure.study.TMX.ppb.graph.comb)
+#ggsave(file = "C:/Users/Jesse/Desktop/Neonicotinoids_15/Data/Column-Study/Raw-Data-Outputs/structure.study.TMX.ppb.graph.comb.pdf", structure.study.TMX.ppb.graph.comb)
 
 
 
@@ -1697,10 +2839,10 @@ Leach.tall.TMX.ppb.mass.graph <- ggplot(tall.columns.no.SS.stats.mass, aes(cum.L
 
   
 
-Leach.tall.TMX.ppb.mass.graph
+#Leach.tall.TMX.ppb.mass.graph
 
 pdf("C:/Users/Jesse/Desktop/Neonicotinoids_15/Data/Column-Study/Raw-Data-Outputs/Leach.tall.TMX.ppb.mass.graph1.pdf")
-Leach.tall.TMX.ppb.mass.graph
+#Leach.tall.TMX.ppb.mass.graph
 dev.off()
 
 
@@ -1832,7 +2974,7 @@ structure.study.TMX.mass.graph <- ggplot(structure.study.stats.mass, aes(cum.Lea
 structure.study.TMX.mass.graph
 
 
-pdf("C:/Users/Jesse/Desktop/Neonicotinoids_15/Data/Column-Study/Raw-Data-Outputs/structure.study.TMX.mass.graph.pdf")
+#pdf("C:/Users/Jesse/Desktop/Neonicotinoids_15/Data/Column-Study/Raw-Data-Outputs/structure.study.TMX.mass.graph.pdf")
 structure.study.TMX.mass.graph
 dev.off()
 
@@ -1951,7 +3093,7 @@ Leach.small.TMX.mass.graph <- ggplot(small.columns.stats.mass, aes(cum.Leach.vol
 Leach.small.TMX.mass.graph
 
 
-pdf("C:/Users/Jesse/Desktop/Neonicotinoids_15/Data/Column-Study/Raw-Data-Outputs/Leach.small.TMX.mass.graph.pdf")
+#pdf("C:/Users/Jesse/Desktop/Neonicotinoids_15/Data/Column-Study/Raw-Data-Outputs/Leach.small.TMX.mass.graph.pdf")
 Leach.small.TMX.mass.graph
 dev.off()
 
@@ -2832,7 +3974,7 @@ TMX.mass.and.conc.Leachate.grid <- grid.arrange(Leach.tall.TMX.ppb.graph.comb.gr
 
 TMX.mass.and.conc.Leachate.grid
 
-ggsave(file = "C:/Users/Jesse/Desktop/Neonicotinoids_15/Data/Column-Study/Raw-Data-Outputs/TMX.mass.and.conc.Leachate.grid1.pdf", TMX.mass.and.conc.Leachate.grid)
+#ggsave(file = "C:/Users/Jesse/Desktop/Neonicotinoids_15/Data/Column-Study/Raw-Data-Outputs/TMX.mass.and.conc.Leachate.grid1.pdf", TMX.mass.and.conc.Leachate.grid)
 TMX.mass.and.conc.Leachate.grid
 dev.off()
 

@@ -2440,3 +2440,1359 @@ dev.off()
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+#######trying to transform second y axis to combine mass and concentration into one figure***********
+
+
+
+
+
+
+#### (i.e. join by common bulk density)
+
+
+###Measured bulk densities (g cm^ 3)
+
+Clay.Ap.BD <-  1.37 
+
+Clay.Bt.BD <- 1.64
+
+Sand.Ap.BD <- 1.54
+
+Sand.Bt.BD <- 1.67
+
+#####now get weighted average by depth contribution to total
+
+
+###for 0-30 cm
+
+Sand.top.weighted.BD <- (Sand.Ap.BD * 20 + Sand.Bt.BD * 10)/30
+
+Clay.top.weighted.BD <- (Clay.Ap.BD * 20 + Clay.Bt.BD * 10)/30
+
+top.BD <- (Sand.top.weighted.BD + Clay.top.weighted.BD)/2
+
+
+##30- 45 cm
+
+middle.BD <- (Clay.Bt.BD + Sand.Bt.BD)/2
+
+
+#45-60 cm
+
+bottom.BD <- (Clay.Bt.BD + Sand.Bt.BD)/2
+
+
+
+
+##Volume of soil
+
+r <- 10 ##cm 
+
+#0-30 cm
+
+volume.top <- pi* (r)^2 * 30
+
+##30- 45 cm
+
+volume.middle <- pi * (r)^2 *15
+
+#45-60 cm
+
+volume.bottom <- pi * (r)^2 *15 
+
+
+###mass of soil ...converted to kg
+
+#0-30 cm
+
+mass.top <- (top.BD * volume.top)/1000 
+
+mass.middle <- (middle.BD * volume.middle)/1000
+
+mass.bottom <- (bottom.BD * volume.bottom)/1000
+
+
+#### ^^^^^^^ now use these to transform y axis on the right hand side (i.e. add second axis with mass)******
+
+
+###also lets just transform the data in data frame
+
+BS_top.bar$TMX.mass.micrg <-  BS_top.bar$TMX * mass.top
+
+BS_top.bar$sd.mass <- BS_top.bar$sd *mass.top
+
+BS_top.bar$se.mass <- BS_top.bar$se *mass.top
+
+
+###see difference in two TMX masses
+
+BS_top.bar ###universal BD
+
+BS_TMX.mass.top.ba ###regular mass
+
+##looks like the universal BD overestimates a bit, not too bad though? (especially in clay)
+
+
+
+
+
+
+###############starting plotting with the top section
+
+
+bar.top3 <- ggplot(BS_top.bar, aes(Texture, TMX, fill = Stage)) +
+  
+  geom_bar(position = position_dodge(), stat = "identity") +
+  
+  geom_bar(position = "dodge", stat = "identity", color="black", show.legend =FALSE, lwd = 0.75) + ##add outline to bars
+  
+  geom_errorbar(aes(ymin = TMX, ymax = TMX + se),      ##error bars
+                
+                width = 0.2, position = position_dodge(0.9), lwd = 0.75) +
+  
+  cleanup +                                          #cleanup
+  
+  scale_fill_manual(name = "",
+                    
+                    labels = c("V1", "V3", "V5", "V5, No Plant"), 
+                    
+                    values = c("blue", "red", "green", "yellow")) +
+  
+  xlab("") +
+  
+  ylab(expression(TMX ~ (mu * g ~ kg^{-1}))) + ### pain in the ass way to express superscripts
+  
+  theme(axis.text.y = element_text(size = 16),  ## change font size of y axis
+        
+        axis.title = element_text(size = 16, face = "bold")) +
+  
+  #geom_label(aes(label = letters)) +
+  
+  #geom_text(aes(label = letters)) +
+  
+  geom_text(aes(label = letters, y = TMX + se, fontface = "italic"), position = position_dodge(width=0.9), vjust= -0.5) +  #####add in signficance letter--adjusted for errror bars
+  
+  theme(axis.text.x = element_text(size = 16),  ## change font size of y axis
+        
+        axis.title = element_text(size = 16, face = "bold")) +
+  
+  theme(axis.line.x = element_line(size = 1), ##change axis line size
+        
+        axis.line.y = element_line(size = 1),
+        
+        panel.border = element_rect(color = "black", fill = NA, size = 1.75), ##add border
+        
+        legend.position = "none", ## move legend
+        
+        legend.margin = margin(0, 0, 0, 0, "mm"), ##remove margin on legend
+        
+        legend.text = element_text( size = 16), ##legend text
+        
+        #legend.background = element_rect(color = "black", size = 1), ## add legend border
+        
+        #legend.key.height=unit(1,"line"), 
+        
+        #legend.key.width=unit(1,"line")
+        
+        legend.key = element_rect(color = "black", size = 0.75), ## put line around legend key
+        
+        legend.direction = "vertical", 
+        
+        axis.ticks.y = element_line(size = 1, color = "black"),  ##enlargen ticks--problem at op right corner
+        
+        legend.key.size = unit(7, 'mm'),
+        
+        legend.key.height = unit(6, "mm"), 
+        
+        plot.margin = unit(c(1.5, 0,1.5,-1.5),"mm"),
+        
+        axis.title.y = element_text(vjust = -1)) +
+  
+  #plot.title = element_text( Size = 18)) +
+  
+  #guides(guide_legend(nrow=4)) +
+  
+  #legend.spacing.y = unit(1, "mm") +
+  
+  #legend.key.size = unit(1, "line")) 
+  
+  #scale_fill_manual(values=values, labels=setNames(paste(labels, " "), entries)) +
+  
+ggtitle("a) Bulk Soil, 0-30 cm") +
+  
+  theme(plot.title = element_text(size = 16, face = "bold", hjust = -0.05, vjust = 1)) + ## added title and adjusted
+  
+  #scale_y_continuous(expand = c(0,0), limit = c(0, 110)) + scale_x_discrete(expand = c(0.03,0)) ### removed excess space btw bars and axis
+
+  scale_x_discrete(expand = c(0.03,0)) +
+
+  scale_y_continuous(sec.axis = sec_axis(~.*mass.top), ##transformation of the axis
+                                         
+                                         #expression(TMX ~ (mu * g))), 
+
+                     expand = c(0,0), limit = c(0, 110))
+  
+  
+bar.top3
+
+
+
+
+
+
+
+
+
+
+#####now middle section
+
+###also lets just transform the data in data frame
+
+BS_middle.bar$TMX.mass.micrg <-  BS_middle.bar$TMX * mass.middle
+
+BS_middle.bar$sd.mass <- BS_middle.bar$sd * mass.middle
+
+BS_middle.bar$se.mass <- BS_middle.bar$se * mass.middle
+
+
+###see difference in two TMX masses
+
+BS_middle.bar ###universal BD
+
+BS_TMX.mass.middle.bar ###regular mass
+
+##close! .... overestimates sand V5 section a bit 
+
+
+
+
+
+
+
+bar.middle3 <- ggplot(BS_middle.bar, aes(Texture, TMX, fill = Stage)) +
+  
+  geom_bar(position = position_dodge(), stat = "identity") +
+  
+  geom_bar(position = "dodge", stat = "identity", color="black", show.legend =FALSE, lwd = 0.75) + ##add outline to bars
+  
+  geom_errorbar(aes(ymin = TMX, ymax = TMX + se),      ##error bars
+                
+                width = 0.2, position = position_dodge(0.9), lwd = 0.75) +
+  
+  cleanup +                                          #cleanup
+  
+  scale_fill_manual(name = "",
+                    
+                    labels = c("V1", "V3", "V5", "V5, No Plant"), 
+                    
+                    values = c("blue", "red", "green", "yellow")) +
+  
+  xlab("") +
+  
+  ylab("") + ### pain in the ass way to express superscripts
+  
+  theme(axis.text.y = element_text(size = 16),  ## change font size of y axis
+        
+        axis.title = element_text(size = 16, face = "bold")) +
+  
+  #geom_label(aes(label = letters)) +
+  
+  #geom_text(aes(label = letters)) +
+  
+  geom_text(aes(label = letters, y = TMX + se, fontface = "italic"), position = position_dodge(width=0.9), vjust= -0.5) +  #####add in signficance letter--adjusted for errror bars
+  
+  theme(axis.text.x = element_text(size = 16),  ## change font size of y axis
+        
+        axis.title = element_text(size = 16, face = "bold")) +
+  
+  theme(axis.line.x = element_line(size = 1), ##change axis line size
+        
+        axis.line.y = element_line(size = 1),
+        
+        panel.border = element_rect(color = "black", fill = NA, size = 1.75), ##add border
+        
+        legend.position = c(0.4,0.7), ## move legend c(0.5,0.7)
+        
+        legend.margin = margin(0, 0, 0, 0, "mm"), ##remove margin on legend
+        
+        legend.text = element_text(size = 16), ##legend text
+        
+        #legend.background = element_rect(color = "black", size = 1), ## add legend border
+        
+        #legend.key.height=unit(1,"line"), 
+        
+        #legend.key.width=unit(1,"line")
+        
+        legend.key = element_rect(color = "black", size = 0.75), ## put line around legend key
+        
+        legend.direction = "vertical", 
+        
+        axis.ticks.y = element_line(size = 1, color = "black"),  ##enlargen ticks--problem at op right corner
+        
+        legend.key.size = unit(6, 'mm'),
+        
+        legend.key.height = unit(6, "mm")) +
+        
+        #legend.background = element_rect(size = NULL)) +
+        
+        #legend.box.spacing = unit(0, "mm")) +
+  
+  #plot.title = element_text( Size = 18)) +
+  
+  #guides(guide_legend(nrow=4)) +
+  
+  #legend.spacing.y = unit(1, "mm") +
+  
+  #legend.key.size = unit(1, "line")) 
+  
+  #scale_fill_manual(values=values, labels=setNames(paste(labels, " "), entries)) +
+  
+ggtitle("b)  Bulk Soil, 30-45 cm") + annotate("text", x = 1.5, y= 26.25, label = "1/4 scale in 0-30 cm section") +
+  
+  theme(plot.title = element_text(size = 16, face = "bold", vjust = 1)) + ## added title and adjusted
+  
+  scale_x_discrete(expand = c(0.03,0)) + ### removed excess space btw bars and axis
+
+  scale_y_continuous(sec.axis = sec_axis(~.* mass.middle), ##transformation of the axis
+                                         
+                                          #expression(TMX ~ (mu * g))),
+    
+                                          expand = c(0,0), limit = c(0, 27.5))
+  
+  
+bar.middle3
+
+
+
+
+
+
+
+
+
+
+###########now bottom section
+
+
+###also lets just transform the data in data frame
+
+BS_bottom.bar$TMX.mass.micrg <-  BS_bottom.bar$TMX * mass.bottom
+
+BS_bottom.bar$sd.mass <- BS_bottom.bar$sd * mass.bottom
+
+BS_bottom.bar$se.mass <- BS_bottom.bar$se * mass.bottom
+
+
+###see difference in two TMX masses
+
+BS_bottom.bar ###universal BD
+
+BS_TMX.mass.bottom.bar ###regular mass
+
+## very close
+
+
+
+
+bar.bottom3 <- ggplot(BS_bottom.bar, aes(Texture, TMX, fill = Stage)) +
+  
+  geom_bar(position = position_dodge(), stat = "identity") +
+  
+  geom_bar(position = "dodge", stat = "identity", color="black", show.legend =FALSE, lwd = 0.75) + ##add outline to bars
+  
+  geom_errorbar(aes(ymin = TMX, ymax = TMX + se),      ##error bars
+                
+                width = 0.2, position = position_dodge(0.9), lwd = 0.75) +
+  
+  cleanup +                                          #cleanup
+  
+  scale_fill_manual(name = "",
+                    
+                    labels = c("V1", "V3", "V5", "V5, No Plant"), 
+                    
+                    values = c("blue", "red", "green", "yellow")) +
+  
+  xlab("") +
+  
+  ylab("") + ### pain in the ass way to express superscripts
+  
+  theme(axis.text.y = element_text(size = 16),  ## change font size of y axis
+        
+        axis.title = element_text(size = 16, face = "bold")) +
+  
+  #geom_label(aes(label = letters)) +
+  
+  #geom_text(aes(label = letters)) +
+  
+  geom_text(aes(label = letters, y = TMX + se, fontface = "italic"), position = position_dodge(width=0.9), vjust= -0.5) +  #####add in signficance letter--adjusted for errror bars
+  
+  theme(axis.text.x = element_text(size = 16),  ## change font size of y axis
+        
+        axis.title = element_text(size = 16, face = "bold")) +
+  
+  theme(axis.line.x = element_line(size = 1), ##change axis line size
+        
+        axis.line.y = element_line(size = 1),
+        
+        panel.border = element_rect(color = "black", fill = NA, size = 1.75), ##add border
+        
+        legend.position = "", ## move legend c(0.5,0.6)
+        
+        legend.margin = margin(0, 0, 0, 0, "mm"), ##remove margin on legend
+        
+        legend.text = element_text( size = 16), ##legend text
+        
+        #legend.background = element_rect(color = "black", size = 1), ## add legend border
+        
+        #legend.key.height=unit(1,"line"), 
+        
+        #legend.key.width=unit(1,"line")
+        
+        legend.key = element_rect(color = "black", size = 0.75), ## put line around legend key
+        
+        legend.direction = "vertical", 
+        
+        axis.ticks.y = element_line(size = 1, color = "black"),  ##enlargen ticks--problem at op right corner
+        
+        legend.key.size = unit(7, 'mm'),
+        
+        legend.key.height = unit(6, "mm"),
+        
+        plot.margin = unit(c(1.5, 1,1.5,-2),"mm")) +
+  
+  #plot.title = element_text( Size = 18)) +
+  
+  #guides(guide_legend(nrow=4)) +
+  
+  #legend.spacing.y = unit(1, "mm") +
+  
+  #legend.key.size = unit(1, "line")) 
+  
+  #scale_fill_manual(values=values, labels=setNames(paste(labels, " "), entries)) +
+  
+ggtitle("c)  Bulk Soil, 45-60 cm") + annotate("text", x = 1.5, y= 26.25, label = "1/4 scale in 0-30 cm section") +
+  
+  theme(plot.title = element_text(size = 16, face = "bold", vjust = 1)) + ## added title and adjusted
+  
+  scale_y_continuous(sec.axis = sec_axis(~.* mass.bottom, expression(TMX ~ (mu * g))),
+    
+                      expand = c(0,0), limit = c(0, 27.5)) +
+
+                      scale_x_discrete(expand = c(0.03,0)) ### removed excess space btw bars and axis
+
+
+bar.bottom3
+
+
+
+######now throw together in grid
+
+
+
+
+BS.universal.BD <- grid.arrange(bar.top3, bar.middle3, bar.bottom3, ncol = 3)
+
+BS.universal.BD 
+
+ggsave(file = "C:/Users/Jesse/Desktop/Neonicotinoids_15/Data/Column-Study/Raw-Data-Outputs/BS.universal.BD.pdf",
+       
+       BS.universal.BD )
+dev.off()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+##########for shits and gigs plot original mass figures in grid ****************************
+
+
+
+bar.top.mass.Universal.BD <- ggplot(BS_top.bar, aes(Texture, TMX.mass.micrg, fill = Stage)) +
+  
+  geom_bar(position = position_dodge(), stat = "identity") +
+  
+  geom_bar(position = "dodge", stat = "identity", color="black", show.legend =FALSE, lwd = 0.75) + ##add outline to bars
+  
+  geom_errorbar(aes(ymin = TMX.mass.micrg, ymax = TMX.mass.micrg + se.mass),      ##error bars
+                
+                width = 0.2, position = position_dodge(0.9), lwd = 0.75) +
+  
+  cleanup +                                          #cleanup
+  
+  scale_fill_manual(name = "",
+                    
+                    labels = c("V1", "V3", "V5", "V5, No Plant"), 
+                    
+                    values = c("blue", "red", "green", "yellow")) +
+  
+  xlab("") +
+  
+  ylab(expression(TMX ~ (mu * g))) + ### pain in the ass way to express superscripts
+  
+  theme(axis.text.y = element_text(size = 16),  ## change font size of y axis
+        
+        axis.title = element_text(size = 16, face = "bold")) +
+  
+  #geom_label(aes(label = letters)) +
+  
+  #geom_text(aes(label = letters)) +
+  
+  geom_text(aes(label = BS_TMX.mass.top.bar$letters, y = TMX.mass.micrg + se.mass, fontface = "italic"), position = position_dodge(width=0.9), vjust= -0.5) +  #####add in signficance letter--adjusted for errror bars
+  
+  theme(axis.text.x = element_text(size = 16),  ## change font size of y axis
+        
+        axis.title = element_text(size = 16, face = "bold"),
+        
+        axis.title.y = element_text(vjust = -0.7)) +
+  
+  theme(axis.line.x = element_line(size = 1), ##change axis line size
+        
+        axis.line.y = element_line(size = 1),
+        
+        panel.border = element_rect(color = "black", fill = NA, size = 1.75), ##add border
+        
+        legend.position = "none", ## move legend
+        
+        legend.margin = margin(0, 0, 0, 0, "mm"), ##remove margin on legend
+        
+        legend.text = element_text( size = 16), ##legend text
+        
+        #legend.background = element_rect(color = "black", size = 1), ## add legend border
+        
+        #legend.key.height=unit(1,"line"), 
+        
+        #legend.key.width=unit(1,"line")
+        
+        legend.key = element_rect(color = "black", size = 0.75), ## put line around legend key
+        
+        legend.direction = "vertical", 
+        
+        axis.ticks.y = element_line(size = 1, color = "black"),  ##enlargen ticks--problem at op right corner
+        
+        legend.key.size = unit(7, 'mm'),
+        
+        legend.key.height = unit(6, "mm"),
+        
+        plot.margin = unit(c(0,1,0,0),"mm")) +
+  
+  #plot.title = element_text( Size = 18)) +
+  
+  #guides(guide_legend(nrow=4)) +
+  
+  #legend.spacing.y = unit(1, "mm") +
+  
+  #legend.key.size = unit(1, "line")) 
+  
+  #scale_fill_manual(values=values, labels=setNames(paste(labels, " "), entries)) +
+  
+ggtitle("d)") +
+  
+  theme(plot.title = element_text(size = 16, face = "bold", vjust = 1)) + ## added title and adjusted
+  
+  scale_y_continuous(expand = c(0,0), limit = c(0, 1620)) + scale_x_discrete(expand = c(0.03,0)) ### removed excess space btw bars and axis
+
+bar.top.mass.Universal.BD
+
+
+
+bar.middle.mass.Universal.BD <- ggplot(BS_middle.bar, aes(Texture, TMX.mass.micrg, fill = Stage)) +
+  
+  geom_bar(position = position_dodge(), stat = "identity") +
+  
+  geom_bar(position = "dodge", stat = "identity", color="black", show.legend =FALSE, lwd = 0.75) + ##add outline to bars
+  
+  geom_errorbar(aes(ymin = TMX.mass.micrg, ymax = TMX.mass.micrg + se.mass),      ##error bars
+                
+                width = 0.2, position = position_dodge(0.9), lwd = 0.75) +
+  
+  cleanup +                                          #cleanup
+  
+  scale_fill_manual(name = "",
+                    
+                    labels = c("V1", "V3", "V5", "V5, No Plant"), 
+                    
+                    values = c("blue", "red", "green", "yellow")) +
+  
+  xlab("") +
+  
+  ylab("") + ### pain in the ass way to express superscripts
+  
+  theme(axis.text.y = element_text(size = 16),  ## change font size of y axis
+        
+        axis.title = element_text(size = 16, face = "bold")) +
+  
+  #geom_label(aes(label = letters)) +
+  
+  #geom_text(aes(label = letters)) +
+  
+  geom_text(aes(label = BS_TMX.mass.middle.bar$letters, y = TMX.mass.micrg + se.mass, fontface = "italic"), position = position_dodge(width=0.9), vjust= -0.5) +  #####add in signficance letter--adjusted for errror bars
+  
+  theme(axis.text.x = element_text(size = 16),  ## change font size of y axis
+        
+        axis.title = element_text(size = 16, face = "bold")) +
+  
+  theme(axis.line.x = element_line(size = 1), ##change axis line size
+        
+        axis.line.y = element_line(size = 1),
+        
+        panel.border = element_rect(color = "black", fill = NA, size = 1.75), ##add border
+        
+        legend.position = c(0.35,0.6), ## move legend
+        
+        legend.margin = margin(0, 0, 0, 0, "mm"), ##remove margin on legend
+        
+        legend.text = element_text( size = 16), ##legend text
+        
+        #legend.background = element_rect(color = "black", size = 1), ## add legend border
+        
+        #legend.key.height=unit(1,"line"), 
+        
+        #legend.key.width=unit(1,"line")
+        
+        legend.key = element_rect(color = "black", size = 0.75), ## put line around legend key
+        
+        legend.direction = "vertical", 
+        
+        axis.ticks.y = element_line(size = 1, color = "black"),  ##enlargen ticks--problem at op right corner
+        
+        legend.key.size = unit(7, 'mm'),
+        
+        legend.key.height = unit(6, "mm"),
+        
+        plot.margin = unit(c(0,1,0,0),"mm")) +
+  
+  #plot.title = element_text( Size = 18)) +
+  
+  #guides(guide_legend(nrow=4)) +
+  
+  #legend.spacing.y = unit(1, "mm") +
+  
+  #legend.key.size = unit(1, "line")) 
+  
+  #scale_fill_manual(values=values, labels=setNames(paste(labels, " "), entries)) +
+  
+ggtitle("e)") + annotate("text", x = 1.5, y= 380, label = "*** 1/4 scale in 0-30 cm section") +
+  
+  theme(plot.title = element_text(size = 16, face = "bold", vjust = 1)) + ## added title and adjusted
+  
+  scale_y_continuous(expand = c(0,0), limit = c(0, 420)) + scale_x_discrete(expand = c(0.03,0)) ### removed excess space btw bars and axis
+
+bar.middle.Universal.BD ####plant effect only sig in sand
+
+
+
+
+bar.bottom.mass.Universal.BD <- ggplot(BS_bottom.bar, aes(Texture, TMX.mass.micrg, fill = Stage)) +
+  
+  geom_bar(position = position_dodge(), stat = "identity") +
+  
+  geom_bar(position = "dodge", stat = "identity", color="black", show.legend =FALSE, lwd = 0.75) + ##add outline to bars
+  
+  geom_errorbar(aes(ymin = TMX.mass.micrg, ymax = TMX.mass.micrg + se.mass),      ##error bars
+                
+                width = 0.2, position = position_dodge(0.9), lwd = 0.75) +
+  
+  cleanup +                                          #cleanup
+  
+  scale_fill_manual(name = "",
+                    
+                    labels = c("V1", "V3", "V5", "V5, No Plant"), 
+                    
+                    values = c("blue", "red", "green", "yellow")) +
+  
+  xlab("") +
+  
+  ylab("") + ### pain in the ass way to express superscripts
+  
+  theme(axis.text.y = element_text(size = 16),  ## change font size of y axis
+        
+        axis.title = element_text(size = 16, face = "bold")) +
+  
+  #geom_label(aes(label = letters)) +
+  
+  #geom_text(aes(label = letters)) +
+  
+  geom_text(aes(label = BS_TMX.mass.bottom.bar$letters, y = TMX.mass.micrg + se.mass, fontface = "italic"), position = position_dodge(width=0.9), vjust= -0.5) +  #####add in signficance letter--adjusted for errror bars
+  
+  theme(axis.text.x = element_text(size = 16),  ## change font size of y axis
+        
+        axis.title = element_text(size = 16, face = "bold")) +
+  
+  theme(axis.line.x = element_line(size = 1), ##change axis line size
+        
+        axis.line.y = element_line(size = 1),
+        
+        panel.border = element_rect(color = "black", fill = NA, size = 1.75), ##add border
+        
+        legend.position = "none", ## move legend
+        
+        legend.margin = margin(0, 0, 0, 0, "mm"), ##remove margin on legend
+        
+        legend.text = element_text( size = 16), ##legend text
+        
+        #legend.background = element_rect(color = "black", size = 1), ## add legend border
+        
+        #legend.key.height=unit(1,"line"), 
+        
+        #legend.key.width=unit(1,"line")
+        
+        legend.key = element_rect(color = "black", size = 0.75), ## put line around legend key
+        
+        legend.direction = "vertical", 
+        
+        axis.ticks.y = element_line(size = 1, color = "black"),  ##enlargen ticks--problem at op right corner
+        
+        legend.key.size = unit(7, 'mm'),
+        
+        legend.key.height = unit(6, "mm"),
+        
+        plot.margin = unit(c(0,1,0,0),"mm")) +
+  
+  #plot.title = element_text( Size = 18)) +
+  
+  #guides(guide_legend(nrow=4)) +
+  
+  #legend.spacing.y = unit(1, "mm") +
+  
+  #legend.key.size = unit(1, "line")) 
+  
+  #scale_fill_manual(values=values, labels=setNames(paste(labels, " "), entries)) +
+  
+ggtitle("f)") + annotate("text", x = 1.5, y= 380, label = "*** 1/4 scale in 0-30 cm section") +
+  
+  theme(plot.title = element_text(size = 16, face = "bold", vjust = 1)) + ## added title and adjusted
+  
+  scale_y_continuous(expand = c(0,0), limit = c(0, 420)) + scale_x_discrete(expand = c(0.03,0)) ### removed excess space btw bars and axis
+
+?annotate
+
+bar.bottom.mass.Universal.BD
+
+
+
+
+BS.mass.Universal.BD <- grid.arrange(bar.top.mass.Universal.BD, bar.middle.mass.Universal.BD, 
+                                     
+                                     bar.bottom.mass.Universal.BD, ncol = 3)
+
+BS.mass.Universal.BD
+
+ggsave(file = "C:/Users/Jesse/Desktop/Neonicotinoids_15/Data/Column-Study/Raw-Data-Outputs/BS.mass.Universal.BD.pdf",
+       
+       BS.mass.Universal.BD)
+dev.off()
+
+
+
+
+
+
+
+
+
+
+############now plot mass as altered by universal BD
+
+bar.top.mass3 <- ggplot(BS_TMX.mass.top.bar, aes(Texture, TMX.micrg, fill = Stage)) +
+  
+  geom_bar(position = position_dodge(), stat = "identity") +
+  
+  geom_bar(position = "dodge", stat = "identity", color="black", show.legend =FALSE, lwd = 0.75) + ##add outline to bars
+  
+  geom_errorbar(aes(ymin = TMX.micrg, ymax = TMX.micrg + se),      ##error bars
+                
+                width = 0.2, position = position_dodge(0.9), lwd = 0.75) +
+  
+  cleanup +                                          #cleanup
+  
+  scale_fill_manual(name = "",
+                    
+                    labels = c("V1", "V3", "V5", "V5, No Plant"), 
+                    
+                    values = c("blue", "red", "green", "yellow")) +
+  
+  xlab("") +
+  
+  ylab(expression(TMX ~ (mu * g))) + ### pain in the ass way to express superscripts
+  
+  theme(axis.text.y = element_text(size = 16),  ## change font size of y axis
+        
+        axis.title = element_text(size = 16, face = "bold")) +
+  
+  #geom_label(aes(label = letters)) +
+  
+  #geom_text(aes(label = letters)) +
+  
+  geom_text(aes(label = letters, y = TMX.micrg + se, fontface = "italic"), position = position_dodge(width=0.9), vjust= -0.5) +  #####add in signficance letter--adjusted for errror bars
+  
+  theme(axis.text.x = element_text(size = 16),  ## change font size of y axis
+        
+        axis.title = element_text(size = 16, face = "bold"),
+        
+        axis.title.y = element_text(vjust = -0.7)) +
+  
+  theme(axis.line.x = element_line(size = 1), ##change axis line size
+        
+        axis.line.y = element_line(size = 1),
+        
+        panel.border = element_rect(color = "black", fill = NA, size = 1.75), ##add border
+        
+        legend.position = "none", ## move legend
+        
+        legend.margin = margin(0, 0, 0, 0, "mm"), ##remove margin on legend
+        
+        legend.text = element_text( size = 16), ##legend text
+        
+        #legend.background = element_rect(color = "black", size = 1), ## add legend border
+        
+        #legend.key.height=unit(1,"line"), 
+        
+        #legend.key.width=unit(1,"line")
+        
+        legend.key = element_rect(color = "black", size = 0.75), ## put line around legend key
+        
+        legend.direction = "vertical", 
+        
+        axis.ticks.y = element_line(size = 1, color = "black"),  ##enlargen ticks--problem at op right corner
+        
+        legend.key.size = unit(7, 'mm'),
+        
+        legend.key.height = unit(6, "mm"),
+        
+        plot.margin = unit(c(0,1,0,0),"mm")) +
+  
+  #plot.title = element_text( Size = 18)) +
+  
+  #guides(guide_legend(nrow=4)) +
+  
+  #legend.spacing.y = unit(1, "mm") +
+  
+  #legend.key.size = unit(1, "line")) 
+  
+  #scale_fill_manual(values=values, labels=setNames(paste(labels, " "), entries)) +
+  
+ggtitle("d)") +
+  
+  theme(plot.title = element_text(size = 16, face = "bold", vjust = 1)) + ## added title and adjusted
+  
+  scale_y_continuous(expand = c(0,0), limit = c(0, 1620)) + scale_x_discrete(expand = c(0.03,0)) ### removed excess space btw bars and axis
+
+bar.top.mass3
+
+
+
+bar.middle.mass3 <- ggplot(BS_TMX.mass.middle.bar, aes(Texture, TMX.micrg, fill = Stage)) +
+  
+  geom_bar(position = position_dodge(), stat = "identity") +
+  
+  geom_bar(position = "dodge", stat = "identity", color="black", show.legend =FALSE, lwd = 0.75) + ##add outline to bars
+  
+  geom_errorbar(aes(ymin = TMX.micrg, ymax = TMX.micrg + se),      ##error bars
+                
+                width = 0.2, position = position_dodge(0.9), lwd = 0.75) +
+  
+  cleanup +                                          #cleanup
+  
+  scale_fill_manual(name = "",
+                    
+                    labels = c("V1", "V3", "V5", "V5, No Plant"), 
+                    
+                    values = c("blue", "red", "green", "yellow")) +
+  
+  xlab("") +
+  
+  ylab("") + ### pain in the ass way to express superscripts
+  
+  theme(axis.text.y = element_text(size = 16),  ## change font size of y axis
+        
+        axis.title = element_text(size = 16, face = "bold")) +
+  
+  #geom_label(aes(label = letters)) +
+  
+  #geom_text(aes(label = letters)) +
+  
+  geom_text(aes(label = letters, y = TMX.micrg + se, fontface = "italic"), position = position_dodge(width=0.9), vjust= -0.5) +  #####add in signficance letter--adjusted for errror bars
+  
+  theme(axis.text.x = element_text(size = 16),  ## change font size of y axis
+        
+        axis.title = element_text(size = 16, face = "bold")) +
+  
+  theme(axis.line.x = element_line(size = 1), ##change axis line size
+        
+        axis.line.y = element_line(size = 1),
+        
+        panel.border = element_rect(color = "black", fill = NA, size = 1.75), ##add border
+        
+        legend.position = c(0.35,0.6), ## move legend
+        
+        legend.margin = margin(0, 0, 0, 0, "mm"), ##remove margin on legend
+        
+        legend.text = element_text( size = 16), ##legend text
+        
+        #legend.background = element_rect(color = "black", size = 1), ## add legend border
+        
+        #legend.key.height=unit(1,"line"), 
+        
+        #legend.key.width=unit(1,"line")
+        
+        legend.key = element_rect(color = "black", size = 0.75), ## put line around legend key
+        
+        legend.direction = "vertical", 
+        
+        axis.ticks.y = element_line(size = 1, color = "black"),  ##enlargen ticks--problem at op right corner
+        
+        legend.key.size = unit(7, 'mm'),
+        
+        legend.key.height = unit(6, "mm"),
+        
+        plot.margin = unit(c(0,1,0,0),"mm")) +
+  
+  #plot.title = element_text( Size = 18)) +
+  
+  #guides(guide_legend(nrow=4)) +
+  
+  #legend.spacing.y = unit(1, "mm") +
+  
+  #legend.key.size = unit(1, "line")) 
+  
+  #scale_fill_manual(values=values, labels=setNames(paste(labels, " "), entries)) +
+  
+ggtitle("e)") + annotate("text", x = 1.5, y= 380, label = "*** 1/4 scale in 0-30 cm section") +
+  
+  theme(plot.title = element_text(size = 16, face = "bold", vjust = 1)) + ## added title and adjusted
+  
+  scale_y_continuous(expand = c(0,0), limit = c(0, 420)) + scale_x_discrete(expand = c(0.03,0)) ### removed excess space btw bars and axis
+
+bar.middle.mass3 ####plant effect only sig in sand
+
+
+
+
+bar.bottom.mass3 <- ggplot(BS_TMX.mass.bottom.bar, aes(Texture, TMX.micrg, fill = Stage)) +
+  
+  geom_bar(position = position_dodge(), stat = "identity") +
+  
+  geom_bar(position = "dodge", stat = "identity", color="black", show.legend =FALSE, lwd = 0.75) + ##add outline to bars
+  
+  geom_errorbar(aes(ymin = TMX.micrg, ymax = TMX.micrg + se),      ##error bars
+                
+                width = 0.2, position = position_dodge(0.9), lwd = 0.75) +
+  
+  cleanup +                                          #cleanup
+  
+  scale_fill_manual(name = "",
+                    
+                    labels = c("V1", "V3", "V5", "V5, No Plant"), 
+                    
+                    values = c("blue", "red", "green", "yellow")) +
+  
+  xlab("") +
+  
+  ylab("") + ### pain in the ass way to express superscripts
+  
+  theme(axis.text.y = element_text(size = 16),  ## change font size of y axis
+        
+        axis.title = element_text(size = 16, face = "bold")) +
+  
+  #geom_label(aes(label = letters)) +
+  
+  #geom_text(aes(label = letters)) +
+  
+  geom_text(aes(label = letters, y = TMX.micrg + se, fontface = "italic"), position = position_dodge(width=0.9), vjust= -0.5) +  #####add in signficance letter--adjusted for errror bars
+  
+  theme(axis.text.x = element_text(size = 16),  ## change font size of y axis
+        
+        axis.title = element_text(size = 16, face = "bold")) +
+  
+  theme(axis.line.x = element_line(size = 1), ##change axis line size
+        
+        axis.line.y = element_line(size = 1),
+        
+        panel.border = element_rect(color = "black", fill = NA, size = 1.75), ##add border
+        
+        legend.position = "none", ## move legend
+        
+        legend.margin = margin(0, 0, 0, 0, "mm"), ##remove margin on legend
+        
+        legend.text = element_text( size = 16), ##legend text
+        
+        #legend.background = element_rect(color = "black", size = 1), ## add legend border
+        
+        #legend.key.height=unit(1,"line"), 
+        
+        #legend.key.width=unit(1,"line")
+        
+        legend.key = element_rect(color = "black", size = 0.75), ## put line around legend key
+        
+        legend.direction = "vertical", 
+        
+        axis.ticks.y = element_line(size = 1, color = "black"),  ##enlargen ticks--problem at op right corner
+        
+        legend.key.size = unit(7, 'mm'),
+        
+        legend.key.height = unit(6, "mm"),
+        
+        plot.margin = unit(c(0,1,0,0),"mm")) +
+  
+  #plot.title = element_text( Size = 18)) +
+  
+  #guides(guide_legend(nrow=4)) +
+  
+  #legend.spacing.y = unit(1, "mm") +
+  
+  #legend.key.size = unit(1, "line")) 
+  
+  #scale_fill_manual(values=values, labels=setNames(paste(labels, " "), entries)) +
+  
+ggtitle("f)") + annotate("text", x = 1.5, y= 380, label = "*** 1/4 scale in 0-30 cm section") +
+  
+  theme(plot.title = element_text(size = 16, face = "bold", vjust = 1)) + ## added title and adjusted
+  
+  scale_y_continuous(expand = c(0,0), limit = c(0, 420)) + scale_x_discrete(expand = c(0.03,0)) ### removed excess space btw bars and axis
+
+?annotate
+
+bar.bottom.mass3
+
+
+
+
+
+
+#################################################################################### 
+
+#just plot regular concentration, no mass
+
+bar.top4 <- ggplot(BS_top.bar, aes(Texture, TMX, fill = Stage)) +
+  
+  geom_bar(position = position_dodge(), stat = "identity") +
+  
+  geom_bar(position = "dodge", stat = "identity", color="black", show.legend =FALSE, lwd = 0.75) + ##add outline to bars
+  
+  geom_errorbar(aes(ymin = TMX, ymax = TMX + se),      ##error bars
+                
+                width = 0.2, position = position_dodge(0.9), lwd = 0.75) +
+  
+  cleanup +                                          #cleanup
+  
+  scale_fill_manual(name = "",
+                    
+                    labels = c("V1", "V3", "V5", "V5, No Plant"), 
+                    
+                    values = c("blue", "red", "green", "yellow")) +
+  
+  xlab("") +
+  
+  ylab(expression(TMX ~ (mu * g ~ kg^{-1}))) + ### pain in the ass way to express superscripts
+  
+  theme(axis.text.y = element_text(size = 16),  ## change font size of y axis
+        
+        axis.title = element_text(size = 16, face = "bold")) +
+  
+  #geom_label(aes(label = letters)) +
+  
+  #geom_text(aes(label = letters)) +
+  
+  geom_text(aes(label = letters, y = TMX + se, fontface = "italic"), position = position_dodge(width=0.9), vjust= -0.5) +  #####add in signficance letter--adjusted for errror bars
+  
+  theme(axis.text.x = element_text(size = 16),  ## change font size of y axis
+        
+        axis.title = element_text(size = 16, face = "bold")) +
+  
+  theme(axis.line.x = element_line(size = 1), ##change axis line size
+        
+        axis.line.y = element_line(size = 1),
+        
+        panel.border = element_rect(color = "black", fill = NA, size = 1.75), ##add border
+        
+        legend.position = "none", ## move legend
+        
+        legend.margin = margin(0, 0, 0, 0, "mm"), ##remove margin on legend
+        
+        legend.text = element_text( size = 16), ##legend text
+        
+        #legend.background = element_rect(color = "black", size = 1), ## add legend border
+        
+        #legend.key.height=unit(1,"line"), 
+        
+        #legend.key.width=unit(1,"line")
+        
+        legend.key = element_rect(color = "black", size = 0.75), ## put line around legend key
+        
+        legend.direction = "vertical", 
+        
+        axis.ticks.y = element_line(size = 1, color = "black"),  ##enlargen ticks--problem at op right corner
+        
+        legend.key.size = unit(7, 'mm'),
+        
+        legend.key.height = unit(6, "mm"), 
+        
+        plot.margin = unit(c(1.5, 0,1.5,-1.5),"mm"),
+        
+        axis.title.y = element_text(vjust = -1)) +
+  
+  #plot.title = element_text( Size = 18)) +
+  
+  #guides(guide_legend(nrow=4)) +
+  
+  #legend.spacing.y = unit(1, "mm") +
+  
+  #legend.key.size = unit(1, "line")) 
+  
+  #scale_fill_manual(values=values, labels=setNames(paste(labels, " "), entries)) +
+  
+ggtitle("a) Bulk Soil, 0-30 cm") +
+  
+  theme(plot.title = element_text(size = 16, face = "bold", hjust = -0.05, vjust = 1)) + ## added title and adjusted
+  
+  #scale_y_continuous(expand = c(0,0), limit = c(0, 110)) + scale_x_discrete(expand = c(0.03,0)) ### removed excess space btw bars and axis
+  
+  scale_x_discrete(expand = c(0.03,0)) +
+  
+  scale_y_continuous(#sec.axis = sec_axis(~.*mass.top), ##transformation of the axis
+                     
+                     #expression(TMX ~ (mu * g))), 
+                     
+                     expand = c(0,0), limit = c(0, 110))
+
+
+bar.top4
+
+
+
+
+
+bar.middle4 <- ggplot(BS_middle.bar, aes(Texture, TMX, fill = Stage)) +
+  
+  geom_bar(position = position_dodge(), stat = "identity") +
+  
+  geom_bar(position = "dodge", stat = "identity", color="black", show.legend =FALSE, lwd = 0.75) + ##add outline to bars
+  
+  geom_errorbar(aes(ymin = TMX, ymax = TMX + se),      ##error bars
+                
+                width = 0.2, position = position_dodge(0.9), lwd = 0.75) +
+  
+  cleanup +                                          #cleanup
+  
+  scale_fill_manual(name = "",
+                    
+                    labels = c("V1", "V3", "V5", "V5, No Plant"), 
+                    
+                    values = c("blue", "red", "green", "yellow")) +
+  
+  xlab("") +
+  
+  ylab("") + ### pain in the ass way to express superscripts
+  
+  theme(axis.text.y = element_text(size = 16),  ## change font size of y axis
+        
+        axis.title = element_text(size = 16, face = "bold")) +
+  
+  #geom_label(aes(label = letters)) +
+  
+  #geom_text(aes(label = letters)) +
+  
+  geom_text(aes(label = letters, y = TMX + se, fontface = "italic"), position = position_dodge(width=0.9), vjust= -0.5) +  #####add in signficance letter--adjusted for errror bars
+  
+  theme(axis.text.x = element_text(size = 16),  ## change font size of y axis
+        
+        axis.title = element_text(size = 16, face = "bold")) +
+  
+  theme(axis.line.x = element_line(size = 1), ##change axis line size
+        
+        axis.line.y = element_line(size = 1),
+        
+        panel.border = element_rect(color = "black", fill = NA, size = 1.75), ##add border
+        
+        legend.position = c(0.4,0.7), ## move legend c(0.5,0.7)
+        
+        legend.margin = margin(0, 0, 0, 0, "mm"), ##remove margin on legend
+        
+        legend.text = element_text(size = 16), ##legend text
+        
+        #legend.background = element_rect(color = "black", size = 1), ## add legend border
+        
+        #legend.key.height=unit(1,"line"), 
+        
+        #legend.key.width=unit(1,"line")
+        
+        legend.key = element_rect(color = "black", size = 0.75), ## put line around legend key
+        
+        legend.direction = "vertical", 
+        
+        axis.ticks.y = element_line(size = 1, color = "black"),  ##enlargen ticks--problem at op right corner
+        
+        legend.key.size = unit(6, 'mm'),
+        
+        legend.key.height = unit(6, "mm")) +
+  
+  #legend.background = element_rect(size = NULL)) +
+  
+  #legend.box.spacing = unit(0, "mm")) +
+  
+  #plot.title = element_text( Size = 18)) +
+  
+  #guides(guide_legend(nrow=4)) +
+  
+  #legend.spacing.y = unit(1, "mm") +
+  
+#legend.key.size = unit(1, "line")) 
+
+#scale_fill_manual(values=values, labels=setNames(paste(labels, " "), entries)) +
+
+ggtitle("b)  Bulk Soil, 30-45 cm") + annotate("text", x = 1.5, y= 26.25, label = "1/4 scale in 0-30 cm section") +
+  
+  theme(plot.title = element_text(size = 16, face = "bold", vjust = 1)) + ## added title and adjusted
+  
+  scale_x_discrete(expand = c(0.03,0)) + ### removed excess space btw bars and axis
+  
+  scale_y_continuous(#sec.axis = sec_axis(~.* mass.middle), ##transformation of the axis
+                     
+                     #expression(TMX ~ (mu * g))),
+                     
+                     expand = c(0,0), limit = c(0, 27.5))
+
+
+bar.middle4
+
+
+
+
+
+bar.bottom4 <- ggplot(BS_bottom.bar, aes(Texture, TMX, fill = Stage)) +
+  
+  geom_bar(position = position_dodge(), stat = "identity") +
+  
+  geom_bar(position = "dodge", stat = "identity", color="black", show.legend =FALSE, lwd = 0.75) + ##add outline to bars
+  
+  geom_errorbar(aes(ymin = TMX, ymax = TMX + se),      ##error bars
+                
+                width = 0.2, position = position_dodge(0.9), lwd = 0.75) +
+  
+  cleanup +                                          #cleanup
+  
+  scale_fill_manual(name = "",
+                    
+                    labels = c("V1", "V3", "V5", "V5, No Plant"), 
+                    
+                    values = c("blue", "red", "green", "yellow")) +
+  
+  xlab("") +
+  
+  ylab("") + ### pain in the ass way to express superscripts
+  
+  theme(axis.text.y = element_text(size = 16),  ## change font size of y axis
+        
+        axis.title = element_text(size = 16, face = "bold")) +
+  
+  #geom_label(aes(label = letters)) +
+  
+  #geom_text(aes(label = letters)) +
+  
+  geom_text(aes(label = letters, y = TMX + se, fontface = "italic"), position = position_dodge(width=0.9), vjust= -0.5) +  #####add in signficance letter--adjusted for errror bars
+  
+  theme(axis.text.x = element_text(size = 16),  ## change font size of y axis
+        
+        axis.title = element_text(size = 16, face = "bold")) +
+  
+  theme(axis.line.x = element_line(size = 1), ##change axis line size
+        
+        axis.line.y = element_line(size = 1),
+        
+        panel.border = element_rect(color = "black", fill = NA, size = 1.75), ##add border
+        
+        legend.position = "", ## move legend c(0.5,0.6)
+        
+        legend.margin = margin(0, 0, 0, 0, "mm"), ##remove margin on legend
+        
+        legend.text = element_text( size = 16), ##legend text
+        
+        #legend.background = element_rect(color = "black", size = 1), ## add legend border
+        
+        #legend.key.height=unit(1,"line"), 
+        
+        #legend.key.width=unit(1,"line")
+        
+        legend.key = element_rect(color = "black", size = 0.75), ## put line around legend key
+        
+        legend.direction = "vertical", 
+        
+        axis.ticks.y = element_line(size = 1, color = "black"),  ##enlargen ticks--problem at op right corner
+        
+        legend.key.size = unit(7, 'mm'),
+        
+        legend.key.height = unit(6, "mm"),
+        
+        plot.margin = unit(c(1.5, 1,1.5,-2),"mm")) +
+  
+  #plot.title = element_text( Size = 18)) +
+  
+  #guides(guide_legend(nrow=4)) +
+  
+  #legend.spacing.y = unit(1, "mm") +
+  
+  #legend.key.size = unit(1, "line")) 
+  
+  #scale_fill_manual(values=values, labels=setNames(paste(labels, " "), entries)) +
+  
+ggtitle("c)  Bulk Soil, 45-60 cm") + annotate("text", x = 1.5, y= 26.25, label = "1/4 scale in 0-30 cm section") +
+  
+  theme(plot.title = element_text(size = 16, face = "bold", vjust = 1)) + ## added title and adjusted
+  
+  scale_y_continuous(#sec.axis = sec_axis(~.* mass.bottom, expression(TMX ~ (mu * g))),
+                     
+                     expand = c(0,0), limit = c(0, 27.5)) +
+  
+  scale_x_discrete(expand = c(0.03,0)) ### removed excess space btw bars and axis
+
+
+bar.bottom3
+
+
+
+######now throw together in grid
+
+
+
+
+BS.TMX.ppb <- grid.arrange(bar.top4, bar.middle4, bar.bottom4, ncol = 3)
+
+BS.TMX.ppb 
+
+ggsave(file = "C:/Users/Jesse/Desktop/Neonicotinoids_15/Data/Column-Study/Raw-Data-Outputs/BS.TMX.ppb .pdf",
+       
+       BS.TMX.ppb  )
+dev.off()
+
+
+
+
+
+
+
+
+
