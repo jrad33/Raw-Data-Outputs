@@ -1961,8 +1961,8 @@ structure.study.P.minus.ET <- subset(P.minus.ET.rain, Size_cm == "60" &
                             Structure == "NS")
 
 
+structure.study.P.minus.ET <- structure.study.P.minus.ET[structure.study.P.minus.ET$Plant.Influence != "No Plant",]
 structure.study.P.minus.ET
-
 
 ##small columns
 
@@ -2190,7 +2190,799 @@ dev.off()
 ggsave(file = "C:/Users/Jesse/Desktop/Neonicotinoids_15/Data/Column-Study/Raw-Data-Outputs/Leach.tall.TMX.ppb.graph.comb.with.ET.pdf", Leach.tall.TMX.ppb.graph.comb.with.ET)
 
 
+#########work on structure study
 
+
+structure.study.P.minus.ET.graph <- ggplot(structure.study.P.minus.ET, aes(x = time.day,
+                                                                                
+                                                                                y = P.ET,
+                                                                                
+                                                                                ymin = -6,
+                                                                                
+                                                                                ymax = 11.5
+                                                                                
+                                                                                
+)) +
+  
+  geom_line(size = 1, aes(linetype = Structure, color = Structure)) + ###linesize = 1, linetype = 2
+  
+  scale_linetype_manual(name = "",
+                        
+                        values = c(2, 1),
+                        
+                        labels = c("Unstructured Clay", "Structured Clay")) +
+  
+  scale_color_manual(name = "",
+                     
+                     values = c('black', "black"),
+                     
+                     labels = c("Unstructured Clay", "Structured Clay")) +
+  
+  ylab("P-ET (cm)") +
+  
+  scale_y_continuous(#breaks = c(-5, 0, 5, 10),
+    
+    expand = c(0,0), trans="reverse", position = "right") +
+  
+  
+  theme_classic() +
+  
+  theme(plot.margin = unit(c(6,17,-33,54), units="points"),
+        
+        axis.title.y = element_text(vjust = 0.3, size = 12, face = "bold", hjust = 0.5),
+        
+        axis.text.y = element_text(size = 15),
+        
+        panel.border = element_rect(color = "black",
+                                    
+                                    fill = NA, size = 3),
+        
+        axis.ticks.y = element_line(size = 1, color = "black"),
+        
+        legend.margin = margin(0, 7, 10, 1, "point"), ##remove margin on legend
+        
+        legend.text = element_text( size = 16),  #size = 16
+        
+        legend.position = c(0.43, 0.15),
+        
+        legend.key=element_blank(),  ##removed gray border around legend symbols
+        
+        legend.key.size = unit(10, "mm"),
+        
+        legend.background = element_rect(color = "black", size = 1),
+        
+        legend.key.height = unit(7, "mm"),
+        
+        legend.key.width = unit(9, "mm"),
+        
+        #                                         legend.box.spacing = unit(10, "mm"),
+        
+        legend.text.align = 0,
+        
+        legend.direction = "horizontal")
+
+#axis.title.y = element_text(vjust = 1.5, hjust = 2.5))
+
+
+
+structure.study.P.minus.ET.graph
+
+
+structure.study.TMX.ppb.graph.with.ET <- ggplot(structure.study.stats, aes(Time.day, TMX_PPB,
+                                                                        
+                                                                        shape = Structure,
+                                                                        
+                                                                        ymax= TMX_PPB + se,
+                                                                        
+                                                                        xmax = Time.day)) + ##use colour or shape to add in factor
+  
+  geom_point(aes(shape = Structure, color = Structure, size = Structure, stroke = 1.5)) +
+  
+  geom_errorbar(aes(ymin = TMX_PPB - se, ymax = TMX_PPB + se)) +
+  
+  xlab("") +
+  
+  ylab(expression(TMX ~ (mu * g ~ L^{-1}))) +
+  
+  scale_shape_manual(name = "",
+                     
+                     values = c(1, 19),
+                     
+                     labels = c("Unstructured Clay", "Structured Clay")) +
+  
+  scale_color_manual(name = "",
+                     
+                     values = c('black', "black"), 
+                     
+                     labels = c("Unstructured Clay", "Structured Clay")) +
+  
+  scale_size_manual(name = "",
+                    
+                    values = c(3.5, 3.5),
+                    
+                    labels = c("Unstructured Clay", "Structured Clay")) +
+  
+  geom_text(aes(label = Letters, y = TMX_PPB, fontface = "italic"),
+            
+            position = position_dodge(width=0.9),
+            
+            hjust= 2.25) +  #####add in signficance letter--adjusted for errror bars
+  
+  cleanup +
+  
+  theme(plot.margin = unit(c(-1,46.5,1,2), units="points"), ##good legend size
+        
+        #                                       panel.border = element_rect(color = "black",
+        
+        #                                                                 fill = NA, size = 1.75),
+        
+        axis.text.y = element_text(size = 16),  ## change font size of y axis
+        
+        axis.title.y = element_text(size = 16),
+        
+        axis.text.x = element_text(size = 16),  ## change font size of y axis
+        
+        axis.title.x = element_text(size = 16),
+        
+        legend.margin = margin(0, 7, 10, 0, "point"), ##remove margin on legend
+        
+        legend.text = element_text(size = 16),
+        
+        legend.position = c(0.35, 0.9),
+        
+        legend.key=element_blank(),  ##removed gray border around legend symbols
+        
+        legend.key.size = unit(8, "mm"),
+        
+        legend.background = element_rect(color = "black", size = 1.25),
+        
+        legend.key.height = unit(7, "mm"),
+        
+        legend.key.width = unit(7, "mm"),
+        
+        #                                         legend.box.spacing = unit(10, "mm"),
+        
+        legend.text.align = 0,
+        
+        axis.line.x = element_line(color = "black", size = 1.75),
+        
+        
+        axis.ticks.x= element_line(size = 1.75, color = "black"),
+        
+        axis.line.y = element_line(color = "black", size = 1.75),
+        
+        axis.ticks.y = element_line(size = 1.75, color = "black"),
+        
+        axis.ticks.length = unit(2, "mm")) +
+  
+  ## add secondary axis to bottom plot and remove ticks
+  
+  scale_y_continuous(sec.axis = sec_axis(~. * 1, labels = NULL,
+                                         
+                                         breaks = c(18)))
+
+structure.study.TMX.ppb.graph.with.ET
+
+
+structure.study.TMX.ppb.graph.comb.with.ET <- grid.arrange(structure.study.P.minus.ET.graph, structure.study.TMX.ppb.graph.with.ET,
+                                                        
+                                                        heights = c(1/4, 3/4))
+
+structure.study.TMX.ppb.graph.comb.with.ET
+
+
+structure.study.TMX.ppb.graph.with.ET
+pdf("C:/Users/Jesse/Desktop/Neonicotinoids_15/Data/Column-Study/Raw-Data-Outputs/structure.study.TMX.ppb.graph.with.ET.pdf")
+dev.off()
+
+ggsave(file = "C:/Users/Jesse/Desktop/Neonicotinoids_15/Data/Column-Study/Raw-Data-Outputs/structure.study.TMX.ppb.graph.comb.with.ET.pdf", structure.study.TMX.ppb.graph.comb.with.ET)
+
+
+
+#################now small columns
+
+
+Leach.small.P.minus.ET.graph <-  ggplot(small.columns.P.minus.ET, aes(x = time.day,
+                                                                     
+                                                                     y = P.ET,
+                                                                     
+                                                                     ymin = -5,
+                                                                     
+                                                                     ymax = 11.5
+                                                                     
+                                                                     
+)) +
+  
+  geom_line(size = 1, aes(linetype = Combo, color = Combo)) + ###linesize = 1, linetype = 2
+  
+  scale_linetype_manual(name = "",
+                        
+                        values = c(2, 1, 2, 1),
+                        
+                        labels = c("Clay, No Plant", "Clay, Plant",
+                                   
+                                   "Sand, No Plant", "Sand, Plant")) +
+  
+  scale_color_manual(name = "",
+                     
+                     values = c('red3', "red3", 'blue1','blue1'), 
+                     
+                     labels = c("Clay, No Plant", "Clay, Plant",
+                                
+                                "Sand, No Plant", "Sand, Plant")) +
+  
+  ylab("P-ET (cm)") +
+  
+  scale_y_continuous(#breaks = c(-5, 0, 5, 10),
+    
+    expand = c(0,0), trans="reverse", position = "right") +
+  
+  
+  theme_classic() +
+  
+  theme(plot.margin = unit(c(6,17,-33,54), units="points"),
+        
+        axis.title.y = element_text(vjust = 0.3, size = 12, face = "bold", hjust = 0.5),
+        
+        axis.text.y = element_text(size = 15),
+        
+        panel.border = element_rect(color = "black",
+                                    
+                                    fill = NA, size = 3),
+        
+        axis.ticks.y = element_line(size = 1, color = "black"),
+        
+        legend.margin = margin(0, 7, 10, 1, "point"), ##remove margin on legend
+        
+        legend.text = element_text( size = 16),  #size = 16
+        
+        legend.position = "", #c(0.43, 0.15)
+        
+        legend.key=element_blank(),  ##removed gray border around legend symbols
+        
+        legend.key.size = unit(10, "mm"),
+        
+        legend.background = element_rect(color = "black", size = 1),
+        
+        legend.key.height = unit(7, "mm"),
+        
+        legend.key.width = unit(9, "mm"),
+        
+        #                                         legend.box.spacing = unit(10, "mm"),
+        
+        legend.text.align = 0,
+        
+        legend.direction = "horizontal")
+
+#axis.title.y = element_text(vjust = 1.5, hjust = 2.5))
+
+
+
+
+Leach.small.P.minus.ET.graph
+
+
+Leach.small.TMX.ppb.graph.with.ET <- ggplot(small.columns.stats, aes(Time.day, TMX_PPB,
+                                                                  
+                                                                  shape = Combo,
+                                                                  
+                                                                  ymax= TMX_PPB + se,
+                                                                  
+                                                                  xmax = Time.day)) + ##use colour or shape to add in factor
+  
+  geom_point(aes(shape = Combo, color = Combo, size = Combo, stroke = 1.5)) +
+  
+  geom_errorbar(aes(ymin = TMX_PPB - se, ymax = TMX_PPB + se)) +
+  
+  xlab("Time (d)") +
+  
+  ylab(expression(TMX ~ (mu * g ~ L^{-1}))) +
+  
+  scale_shape_manual(name = "",
+                     
+                     values = c(1, 19, 1, 19),
+                     
+                     labels = c("Clay, No Plant", "Clay, Plant",
+                                
+                                "Sand, No Plant", "Sand, Plant")) +
+  
+  scale_color_manual(name = "",
+                     
+                     values = c('red3', "red3", 'blue1','blue1'), 
+                     
+                     labels = c("Clay, No Plant", "Clay, Plant",
+                                
+                                "Sand, No Plant", "Sand, Plant")) +
+  
+  scale_size_manual(name = "",
+                    
+                    values = c(3.5, 3.5, 3.5, 3.5),
+                    
+                    labels = c("Clay, No Plant", "Clay, Plant",
+                               
+                               "Sand, No Plant", "Sand, Plant")) +
+  
+  geom_text(aes(label = Letters, y = TMX_PPB, fontface = "italic"),
+            
+            position = position_dodge(width=0.9),
+            
+            hjust= 2.5) +  #####add in signficance letter--adjusted for errror bars
+  
+  geom_segment(aes(x= 5, y = 17.5, xend = 25, yend = 17.5), color = "firebrick1", linetype = 2, size = 1.5,
+               
+               data = small.columns.stats) +
+  
+  #geom_abline(intercept = 17.5, slope = 0, size = 1.5, color = "firebrick1", linetype = 5) +
+  
+  annotate("text", x = 15, y = 25, label = "Aquatic Life Benchmark") + ##add benchamrk
+  
+  cleanup +
+  
+  theme(plot.margin = unit(c(-1,46.5,1,2), units="points"), ##good legend size
+        
+        #                                       panel.border = element_rect(color = "black",
+        
+        #                                                                 fill = NA, size = 1.75),
+        
+        axis.text.y = element_text(size = 16),  ## change font size of y axis
+        
+        axis.title.y = element_text(size = 16),
+        
+        axis.text.x = element_text(size = 16),  ## change font size of y axis
+        
+        axis.title.x = element_text(size = 16, face = "bold"),
+        
+        legend.margin = margin(0, 5, 10, 1, "point"), ##remove margin on legend
+        
+        legend.text = element_text( size = 16),
+        
+        legend.position = "none",
+        
+        legend.key=element_blank(),  ##removed gray border around legend symbols
+        
+        legend.key.size = unit(10, "mm"),
+        
+        legend.background = element_rect(color = "black", size = 1.25),
+        
+        legend.key.height = unit(7, "mm"),
+        
+        legend.key.width = unit(7, "mm"),
+        
+        #                                         legend.box.spacing = unit(10, "mm"),
+        
+        legend.text.align = 0,
+        
+        axis.line.x = element_line(color = "black", size = 1.75),
+        
+        
+        axis.ticks.x= element_line(size = 1.75, color = "black"),
+        
+        axis.line.y = element_line(color = "black", size = 1.75),
+        
+        axis.ticks.y = element_line(size = 1.75, color = "black"),
+        
+        axis.ticks.length = unit(2, "mm")) +
+  
+  ## add secondary axis to bottom plot and remove ticks
+  
+  scale_y_continuous(sec.axis = sec_axis(~. * 1, labels = NULL,
+                                         
+                                         breaks = c(85)))
+
+Leach.small.TMX.ppb.graph.with.ET
+
+
+Leach.small.TMX.ppb.graph.comb.with.ET <- grid.arrange(Leach.small.P.minus.ET.graph, Leach.small.TMX.ppb.graph.with.ET,
+                                                    
+                                                    heights = c(1/4, 3/4))
+
+Leach.small.TMX.ppb.graph.comb.with.ET
+
+Leach.small.TMX.ppb.graph.with.ET
+pdf("C:/Users/Jesse/Desktop/Neonicotinoids_15/Data/Column-Study/Raw-Data-Outputs/Leach.small.TMX.ppb.graph.with.ET.pdf")
+dev.off()
+
+ggsave(file = "C:/Users/Jesse/Desktop/Neonicotinoids_15/Data/Column-Study/Raw-Data-Outputs/Leach.small.TMX.ppb.graph.comb.with.ET.pdf", Leach.small.TMX.ppb.graph.comb.with.ET)
+
+
+#####################now TMX mass to be combined with P-ET figures
+
+tall.columns.no.SS.stats.mass
+
+Leach.tall.TMX.ppb.mass.graph.grid.with.ET <- ggplot(tall.columns.no.SS.stats.mass, aes(cum.Leach.vol.mL, cum.TMX.micrg,
+                                                                                
+                                                                                shape = Combo,
+                                                                                
+                                                                                ymax= cum.TMX.micrg + se,
+                                                                                
+                                                                                xmax = cum.Leach.vol.mL)) + ##use colour or shape to add in factor
+  
+  geom_errorbar(aes(ymin = cum.TMX.micrg - se, ymax = cum.TMX.micrg + se),
+                
+                colour="black", size = 0.75) + ### caps won't show
+  
+  geom_errorbarh(aes(xmin = cum.Leach.vol.mL - se1, xmax = cum.Leach.vol.mL + se1),
+                 
+                 colour="black", size = 0.75) +
+  
+  geom_point(aes(shape = Combo, color = Combo, size = Combo, stroke = 1.5)) +
+  
+  xlab("") +
+  
+  ylab(TMX ~ Leached ~ (mu*g)) +
+  
+  scale_shape_manual(name = "",
+                     
+                     values = c(1, 19, 1, 19),
+                     
+                     labels = c("Clay, No Plant", "Clay, Plant",
+                                
+                                "Sand, No Plant", "Sand, Plant")) +
+  
+  scale_color_manual(name = "",
+                     
+                     values = c('red3', "red3", 'blue1','blue1'), 
+                     
+                     labels = c("Clay, No Plant", "Clay, Plant",
+                                
+                                "Sand, No Plant", "Sand, Plant")) +
+  
+  scale_size_manual(name = "",
+                    
+                    values = c(3.5, 3.5, 3.5, 3.5),
+                    
+                    labels = c("Clay, No Plant", "Clay, Plant",
+                               
+                               "Sand, No Plant", "Sand, Plant")) +
+  
+  geom_text(aes(label = Letters, y = cum.TMX.micrg, fontface = "italic"),
+            
+            
+            
+            hjust= -1.25, vjust = -0.5) +  #####add in signficance letter--adjusted for errror bars
+  
+  geom_text(aes(label = Vol.diff, y = cum.TMX.micrg),
+            
+            position = position_dodge(width =0.9),
+            
+            hjust= -2.25, vjust = 0.5, size = 6, fontface = "bold") +
+  
+  annotation_custom(column.60.pic.grob, xmin = -200, xmax = 800, ymin=5, ymax=55) + ##add in column pic
+  
+  # annotation_raster(column.60.pic, ymin = 10, ymax= 50, xmin = 500,xmax = 1300) +
+  
+  cleanup +
+  
+  theme(plot.margin = unit(c(5,36.5,1,27), units="points"), ##good legend size
+        
+        panel.border = element_rect(color = "black",
+                                    
+                                    fill = NA, size = 1.75),
+        
+        axis.text.y = element_text(size = 16),  ## change font size of y axis
+        
+        axis.title.y = element_text(size = 16),
+        
+        axis.text.x = element_text(size = 16),  ## change font size of y axis
+        
+        axis.title.x = element_text(size = 16),
+        
+        legend.margin = margin(0, 5, 10, 1, "point"), ##remove margin on legend
+        
+        legend.text = element_text( size = 16),
+        
+        legend.position = "none",
+        
+        legend.key=element_blank(),  ##removed gray border around legend symbols
+        
+        legend.key.size = unit(10, "mm"),
+        
+        legend.background = element_rect(color = "black", size = 1.25),
+        
+        legend.key.height = unit(7, "mm"),
+        
+        legend.key.width = unit(7, "mm"),
+        
+        #                                         legend.box.spacing = unit(10, "mm"),
+        
+        legend.text.align = 0,
+        
+        axis.line.x = element_line(color = "black", size = 1.75),
+        
+        
+        axis.ticks.x= element_line(size = 1.75, color = "black"),
+        
+        axis.line.y = element_line(color = "black", size = 1.75),
+        
+        axis.ticks.y = element_line(size = 1.75, color = "black"),
+        
+        axis.ticks.length = unit(2, "mm")) +
+  
+  scale_x_continuous(limits = c(0, 4000))
+
+
+
+
+
+
+Leach.tall.TMX.ppb.mass.graph.grid.with.ET
+
+
+
+
+
+
+
+######now structure study***************************
+
+structure.study.TMX.mass.graph.grid.with.ET <- ggplot(structure.study.stats.mass, aes(cum.Leach.vol.mL, cum.TMX.micrg,
+                                                                              
+                                                                              shape = Structure,
+                                                                              
+                                                                              ymax= cum.TMX.micrg + se,
+                                                                              
+                                                                              xmax = cum.Leach.vol.mL + se1)) + ##use colour or shape to add in factor
+  
+  geom_errorbar(aes(ymin = cum.TMX.micrg - se, ymax = cum.TMX.micrg + se),
+                
+                size = 0.75) +
+  
+  geom_errorbarh(aes(xmin = cum.Leach.vol.mL - se1, xmax = cum.Leach.vol.mL + se1),
+                 
+                 size = 0.75) +
+  
+  geom_point(aes(shape = Structure, color = Structure, size = Structure, stroke = 1.5)) +
+  
+  
+  xlab("") +
+  
+  ylab(TMX ~ Leached ~ (mu*g)) +
+  
+  scale_shape_manual(name = "",
+                     
+                     values = c(1, 19),
+                     
+                     labels = c("Untructured Clay", "Structured Clay")) +
+  
+  scale_color_manual(name = "",
+                     
+                     values = c('black', "black"), 
+                     
+                     labels = c("Unstructured Clay", "Structured Clay")) +
+  
+  scale_size_manual(name = "",
+                    
+                    values = c(3.5, 3.5),
+                    
+                    labels = c("Unstructured Clay", "Structured Clay")) +
+  
+  geom_text(aes(label = Letters, y = cum.TMX.micrg, fontface = "italic"),
+            
+            position = position_dodge(width=0.9),
+            
+            hjust= -1.8, vjust =-0.5) +  #####add in signficance letter--adjusted for errror bars
+  
+  geom_text(aes(label = Vol.diff, y = cum.TMX.micrg),
+            
+            position = position_dodge(width =0.9),
+            
+            hjust= -2.75, vjust = 1, size = 6, fontface = "bold") +
+  
+  annotation_custom(column.60.pic.grob, xmin = -200, xmax = 800, ymin=-1, ymax=49) + ##add in column pic
+  
+  cleanup +
+  
+  theme(plot.margin = unit(c(5,36.5,1,27), units="points"), ##good legend size
+        
+        panel.border = element_rect(color = "black",
+                                    
+                                    fill = NA, size = 1.75),
+        
+        axis.text.y = element_text(size = 16),  ## change font size of y axis
+        
+        axis.title.y = element_text(size = 16),
+        
+        axis.text.x = element_text(size = 16),  ## change font size of y axis
+        
+        axis.title.x = element_text(size = 16),
+        
+        legend.margin = margin(0, 5, 10, 1, "point"), ##remove margin on legend
+        
+        legend.text = element_text(size = 16),
+        
+        legend.position = "none",
+        
+        legend.key=element_blank(),  ##removed gray border around legend symbols
+        
+        legend.key.size = unit(10, "mm"),
+        
+        legend.background = element_rect(color = "black", size = 1.25),
+        
+        legend.key.height = unit(7, "mm"),
+        
+        legend.key.width = unit(7, "mm"),
+        
+        #                                         legend.box.spacing = unit(10, "mm"),
+        
+        legend.text.align = 0,
+        
+        axis.line.x = element_line(color = "black", size = 1.75),
+        
+        
+        axis.ticks.x= element_line(size = 1.75, color = "black"),
+        
+        axis.line.y = element_line(color = "black", size = 1.75),
+        
+        axis.ticks.y = element_line(size = 1.75, color = "black"),
+        
+        axis.ticks.length = unit(2, "mm")) +
+  
+  scale_x_continuous( limits = c(0,4000))
+
+
+structure.study.TMX.mass.graph.grid.with.ET
+
+
+
+
+########Small columns    TMX mass***************************************
+
+small.columns.stats.mass
+
+
+Leach.small.TMX.mass.graph.grid.with.ET <- ggplot(small.columns.stats.mass, aes(cum.Leach.vol.mL, cum.TMX.micrg,
+                                                                        
+                                                                        shape = Combo,
+                                                                        
+                                                                        ymax= cum.TMX.micrg + se,
+                                                                        
+                                                                        xmax = cum.Leach.vol.mL + se1)) +
+  
+  geom_errorbar(aes(ymin = cum.TMX.micrg - se, ymax = cum.TMX.micrg + se),
+                
+                size = 0.75) +
+  
+  geom_errorbarh(aes(xmin = cum.Leach.vol.mL - se1, xmax = cum.Leach.vol.mL + se1),
+                 
+                 size = 0.75) +
+  
+  geom_point(aes(shape = Combo, color = Combo, size = Combo, stroke = 1.5)) +
+  
+  xlab("Volume Leached (mL)") +
+  
+  ylab(TMX ~ Leached ~ (mu*g)) +
+  
+  scale_shape_manual(name = "",
+                     
+                     values = c(1, 19, 1, 19),
+                     
+                     labels = c("Clay, No Plant", "Clay, Plant",
+                                
+                                "Sand, No Plant", "Sand, Plant")) +
+  
+  scale_color_manual(name = "",
+                     
+                     values = c('red3', "red3", 'blue1','blue1'), 
+                     
+                     labels = c("Clay, No Plant", "Clay, Plant",
+                                
+                                "Sand, No Plant", "Sand, Plant")) +
+  
+  scale_size_manual(name = "",
+                    
+                    values = c(3.5, 3.5, 3.5, 3.5),
+                    
+                    labels = c("Clay, No Plant", "Clay, Plant",
+                               
+                               "Sand, No Plant", "Sand, Plant")) +
+  
+  geom_text(aes(label = Letters, y = cum.TMX.micrg, fontface = "italic"),
+            
+            position = position_dodge(width=0.9),
+            
+            hjust= -1.4, vjust = -0.5) +  #####add in signficance letter--adjusted for errror bars
+  
+  #geom_abline(intercept = 17.5, slope = 0, size = 1.5, color = "firebrick1", linetype = 5) +
+  
+  annotation_custom(column.20.pic.grob, xmin = -200, xmax = 800, ymin = 45, ymax = 250) + ##add in column pic
+  
+  cleanup +
+  
+  theme(plot.margin = unit(c(5,36.5,1,21), units="points"), ##good legend size
+        
+        panel.border = element_rect(color = "black",
+                                    
+                                    fill = NA, size = 1.75),
+        
+        axis.text.y = element_text(size = 16),  ## change font size of y axis
+        
+        axis.title.y = element_text(size = 16),
+        
+        axis.text.x = element_text(size = 16),  ## change font size of y axis
+        
+        axis.title.x = element_text(size = 16, face = "bold"),
+        
+        legend.margin = margin(0, 5, 10, 1, "point"), ##remove margin on legend
+        
+        legend.text = element_text( size = 16),
+        
+        legend.position = "none",
+        
+        legend.key=element_blank(),  ##removed gray border around legend symbols
+        
+        legend.key.size = unit(10, "mm"),
+        
+        legend.background = element_rect(color = "black", size = 1.25),
+        
+        legend.key.height = unit(7, "mm"),
+        
+        legend.key.width = unit(7, "mm"),
+        
+        #                                         legend.box.spacing = unit(10, "mm"),
+        
+        legend.text.align = 0,
+        
+        axis.line.x = element_line(color = "black", size = 1.75),
+        
+        
+        axis.ticks.x= element_line(size = 1.75, color = "black"),
+        
+        axis.line.y = element_line(color = "black", size = 1.75),
+        
+        axis.ticks.y = element_line(size = 1.75, color = "black"),
+        
+        axis.ticks.length = unit(2, "mm")) +
+  
+  scale_x_continuous(limits = c(0, 4000))
+
+
+
+
+Leach.small.TMX.mass.graph.grid.with.ET
+
+
+
+
+
+######arrange
+
+# Leach.tall.TMX.ppb.graph.comb.grid
+# 
+# structure.study.TMX.ppb.graph.comb.grid
+# 
+# Leach.small.TMX.ppb.graph.comb.grid
+# 
+# Leach.tall.TMX.ppb.mass.graph.grid
+# 
+# structure.study.TMX.mass.graph.grid
+# 
+# Leach.small.TMX.mass.graph.grid
+# 
+# Leach.small.TMX.mass.graph.grid
+
+
+TMX.mass.and.conc.Leachate.grid.with.ET <- grid.arrange(Leach.tall.TMX.ppb.graph.comb.with.ET,##conc
+                                                
+                                                structure.study.TMX.ppb.graph.comb.with.ET,##conc
+                                                
+                                                Leach.small.TMX.ppb.graph.comb.with.ET,###conc                                   
+                                                
+                                                Leach.tall.TMX.ppb.mass.graph.grid.with.ET, ##mass
+                                                
+                                                structure.study.TMX.mass.graph.grid.with.ET, ##mass
+                                                
+                                                Leach.small.TMX.mass.graph.grid.with.ET, ##mass
+                                                
+                                                layout_matrix = rbind(c(1, 4),
+                                                                      c(2, 5),
+                                                                      c(3, 6)
+                                                )) 
+
+TMX.mass.and.conc.Leachate.grid.with.ET
+
+ggsave(file = "C:/Users/Jesse/Desktop/Neonicotinoids_15/Data/Column-Study/Raw-Data-Outputs/TMX.mass.and.conc.Leachate.grid.with.ET.pdf", TMX.mass.and.conc.Leachate.grid.with.ET)
+TMX.mass.and.conc.Leachate.grid.with.ET
+dev.off()
 
 
 
