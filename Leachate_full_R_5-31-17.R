@@ -1989,6 +1989,26 @@ cleanup <- theme(panel.grid.major = element_blank(),
                  panel.background =  element_blank(),
                  axis.line = element_line(color = "black"))
 
+# write a simple function to add footnote...found this online
+# make.plot.label <- function(footnoteText =
+#                            format(Sys.time(), "%d %b %Y"),
+#                          size = 1.5, color = grey(.5))
+# {
+#   require(grid)
+#   pushViewport(viewport())
+#   grid.text(label = footnoteText ,
+#             x = unit(1,"npc") - unit(2, "mm"),
+#             y = unit(2, "mm"),
+#             just = c("left", "top"),
+#             gp = gpar(cex = size, col = color))
+#   popViewport()
+# }
+# 
+
+
+# make.plot.label("Footnote", color = "black") ##then use something like this to add figure letter label
+
+
 ###try getting P-ET figure set up############################################################################
 
 tall.columns.P.minus.ET.graph  <- ggplot(tall.columns.P.minus.ET, aes(x = time.day,
@@ -1997,7 +2017,7 @@ tall.columns.P.minus.ET.graph  <- ggplot(tall.columns.P.minus.ET, aes(x = time.d
                                                                       
                                                                       ymin = -5,
                                                                       
-                                                                      ymax = 11.5
+                                                                      ymax = 12.5
                                                                       
                                                                       
                                                     )) +
@@ -2022,6 +2042,10 @@ tall.columns.P.minus.ET.graph  <- ggplot(tall.columns.P.minus.ET, aes(x = time.d
   
   ylab("P-ET (cm)") +
   
+  # ggtitle("a)") +
+  
+  #make.plot.label("a)", color = "black")
+  
   scale_y_continuous(#breaks = c(-5, 0, 5, 10),
                      
                      expand = c(0,0), trans="reverse", position = "right") +
@@ -2030,6 +2054,8 @@ tall.columns.P.minus.ET.graph  <- ggplot(tall.columns.P.minus.ET, aes(x = time.d
   theme_classic() +
   
   theme(plot.margin = unit(c(6,17,-33,54), units="points"),
+        
+        # plot.title = element_text(size = 16, face = "bold", hjust = -0.5, vjust = -0.25),
         
         axis.title.y = element_text(vjust = 0.3, size = 12, face = "bold", hjust = 0.5),
         
@@ -2045,13 +2071,13 @@ tall.columns.P.minus.ET.graph  <- ggplot(tall.columns.P.minus.ET, aes(x = time.d
         
         legend.text = element_text( size = 16),  #size = 16
         
-        legend.position = c(0.43, 0.15),
+        legend.position = "", #c(0.43, 0.15)
         
         legend.key=element_blank(),  ##removed gray border around legend symbols
         
         legend.key.size = unit(10, "mm"),
         
-        legend.background = element_rect(color = "black", size = 1),
+        #legend.background = element_rect(color = "black", size = 1), ##legend box
         
         legend.key.height = unit(7, "mm"),
         
@@ -2082,7 +2108,7 @@ Leach.tall.TMX.ppb.graph.with.ET <- ggplot(tall.columns.no.SS.stats, aes(Time.da
   
   geom_errorbar(aes(ymin = TMX_PPB - se, ymax = TMX_PPB + se)) +
   
-  xlab("") +
+  xlab("Time (d)") +
   
   ylab(expression(TMX ~ (mu * g ~ L^{-1}))) +
   
@@ -2116,6 +2142,20 @@ Leach.tall.TMX.ppb.graph.with.ET <- ggplot(tall.columns.no.SS.stats, aes(Time.da
             
             hjust= 2.2, vjust = -1) +  #####add in signficance letter--adjusted for errror bars
   
+  
+  ##try to add a series of short line segments to make a legend for top graph
+  
+  geom_segment(aes(x= 0, y = 18, xend = 5, yend = 18), color = "red3", linetype = 2, size = 1) + #Clay, No Plant
+
+  geom_segment(aes(x= 0, y = 15, xend = 5, yend = 15), color = "red3", linetype = 1, size = 1) + #Clay, Plant
+
+  geom_segment(aes(x= 0, y = 12, xend = 5, yend = 12), color = "blue1", linetype = 2, size = 1) + #Sand, No Plant
+
+  geom_segment(aes(x= 0, y = 9, xend = 5, yend = 9), color = "blue1", linetype = 1, size = 1) + #Sand, Plant
+
+
+  
+  
   cleanup +
   
   theme(plot.margin = unit(c(-1,46.5,1,2), units="points"), ##good legend size
@@ -2130,29 +2170,29 @@ Leach.tall.TMX.ppb.graph.with.ET <- ggplot(tall.columns.no.SS.stats, aes(Time.da
         
         axis.text.x = element_text(size = 16),  ## change font size of y axis
         
-        axis.title.x = element_text(size = 16),
+        axis.title.x = element_text(size = 16, face = "bold"),
         
         legend.margin = margin(0, 7, 10, 1, "point"), ##remove margin on legend
         
-        legend.text = element_text( size = 16),
+        legend.text = element_text( size = 15),
         
-         legend.position = c(0.43, 0.95), #c(0.425, 0.75)
+         legend.position = c(0.4, 0.75), #c(0.43, 0.95)
         
         legend.key=element_blank(),  ##removed gray border around legend symbols
         
-        legend.key.size = unit(10, "mm"),
+        legend.key.size = unit(7, "mm"),
         
-        legend.background = element_rect(color = "black", size = 1),
+        #legend.background = element_rect(color = "black", size = 1), #box around legend
         
-        legend.key.height = unit(7, "mm"),
+        legend.key.height = unit(5, "mm"),
         
-        legend.key.width = unit(9, "mm"),
+        legend.key.width = unit(5, "mm"),
         
         #                                         legend.box.spacing = unit(10, "mm"),
         
         legend.text.align = 0,
         
-        legend.direction = "horizontal",
+        legend.direction = "vertical",
         
         axis.line.x = element_line(color = "black", size = 1.75),
         
@@ -2178,7 +2218,7 @@ Leach.tall.TMX.ppb.graph.with.ET
 
 Leach.tall.TMX.ppb.graph.comb.with.ET <- grid.arrange(tall.columns.P.minus.ET.graph, Leach.tall.TMX.ppb.graph.with.ET,
                                                    
-                                                   heights = c(1/4, 3/4))
+                                                   heights = c(4/11, 7/11))
 
 Leach.tall.TMX.ppb.graph.comb.with.ET
 
@@ -2199,7 +2239,7 @@ structure.study.P.minus.ET.graph <- ggplot(structure.study.P.minus.ET, aes(x = t
                                                                                 
                                                                                 ymin = -6,
                                                                                 
-                                                                                ymax = 11.5
+                                                                                ymax = 12.5
                                                                                 
                                                                                 
 )) +
@@ -2243,7 +2283,7 @@ structure.study.P.minus.ET.graph <- ggplot(structure.study.P.minus.ET, aes(x = t
         
         legend.text = element_text( size = 16),  #size = 16
         
-        legend.position = c(0.43, 0.15),
+        legend.position = "", #c(0.43, 0.15)
         
         legend.key=element_blank(),  ##removed gray border around legend symbols
         
@@ -2253,7 +2293,7 @@ structure.study.P.minus.ET.graph <- ggplot(structure.study.P.minus.ET, aes(x = t
         
         legend.key.height = unit(7, "mm"),
         
-        legend.key.width = unit(9, "mm"),
+        legend.key.width = unit(7, "mm"),
         
         #                                         legend.box.spacing = unit(10, "mm"),
         
@@ -2308,6 +2348,14 @@ structure.study.TMX.ppb.graph.with.ET <- ggplot(structure.study.stats, aes(Time.
             
             hjust= 2.25) +  #####add in signficance letter--adjusted for errror bars
   
+  ##try to add a series of short line segments to make a legend for top graph
+  
+  geom_segment(aes(x= 0, y = 15.5, xend = 5, yend = 15.5), color = "black", linetype = 2, size = 1) + #Clay, No Plant
+  
+  geom_segment(aes(x= 0, y = 11.5, xend = 5, yend = 11.5), color = "black", linetype = 1, size = 1) + #Clay, Plant
+  
+  
+  
   cleanup +
   
   theme(plot.margin = unit(c(-1,46.5,1,2), units="points"), ##good legend size
@@ -2326,15 +2374,15 @@ structure.study.TMX.ppb.graph.with.ET <- ggplot(structure.study.stats, aes(Time.
         
         legend.margin = margin(0, 7, 10, 0, "point"), ##remove margin on legend
         
-        legend.text = element_text(size = 16),
+        legend.text = element_text(size = 15),
         
-        legend.position = c(0.35, 0.9),
+        legend.position = c(0.45, 0.75),
         
         legend.key=element_blank(),  ##removed gray border around legend symbols
         
-        legend.key.size = unit(8, "mm"),
+        legend.key.size = unit(7, "mm"),
         
-        legend.background = element_rect(color = "black", size = 1.25),
+        #legend.background = element_rect(color = "black", size = 1.25), #legend.box
         
         legend.key.height = unit(7, "mm"),
         
@@ -2366,7 +2414,7 @@ structure.study.TMX.ppb.graph.with.ET
 
 structure.study.TMX.ppb.graph.comb.with.ET <- grid.arrange(structure.study.P.minus.ET.graph, structure.study.TMX.ppb.graph.with.ET,
                                                         
-                                                        heights = c(1/4, 3/4))
+                                                        heights = c(4/11, 7/11))
 
 structure.study.TMX.ppb.graph.comb.with.ET
 
@@ -2388,7 +2436,7 @@ Leach.small.P.minus.ET.graph <-  ggplot(small.columns.P.minus.ET, aes(x = time.d
                                                                      
                                                                      ymin = -5,
                                                                      
-                                                                     ymax = 11.5
+                                                                     ymax = 12.5
                                                                      
                                                                      
 )) +
@@ -2440,13 +2488,13 @@ Leach.small.P.minus.ET.graph <-  ggplot(small.columns.P.minus.ET, aes(x = time.d
         
         legend.key=element_blank(),  ##removed gray border around legend symbols
         
-        legend.key.size = unit(10, "mm"),
+        legend.key.size = unit(7, "mm"),
         
         legend.background = element_rect(color = "black", size = 1),
         
-        legend.key.height = unit(7, "mm"),
+        legend.key.height = unit(5, "mm"),
         
-        legend.key.width = unit(9, "mm"),
+        legend.key.width = unit(5, "mm"),
         
         #                                         legend.box.spacing = unit(10, "mm"),
         
@@ -2474,7 +2522,7 @@ Leach.small.TMX.ppb.graph.with.ET <- ggplot(small.columns.stats, aes(Time.day, T
   
   geom_errorbar(aes(ymin = TMX_PPB - se, ymax = TMX_PPB + se)) +
   
-  xlab("Time (d)") +
+  xlab("") + #"Time (d)"
   
   ylab(expression(TMX ~ (mu * g ~ L^{-1}))) +
   
@@ -2508,13 +2556,18 @@ Leach.small.TMX.ppb.graph.with.ET <- ggplot(small.columns.stats, aes(Time.day, T
             
             hjust= 2.5) +  #####add in signficance letter--adjusted for errror bars
   
-  geom_segment(aes(x= 5, y = 17.5, xend = 25, yend = 17.5), color = "firebrick1", linetype = 2, size = 1.5,
+  geom_segment(aes(x= 5, y = 17.5, xend = 25, yend = 17.5), color = "black", linetype = 2, size = 1.5,
                
                data = small.columns.stats) +
   
   #geom_abline(intercept = 17.5, slope = 0, size = 1.5, color = "firebrick1", linetype = 5) +
   
   annotate("text", x = 15, y = 25, label = "Aquatic Life Benchmark") + ##add benchamrk
+  
+  ##try to make this x axis line up with others in this column...add whiteline with similar length as above
+  
+  geom_segment(aes(x= 0, y = 50, xend = 5, yend = 50), color = "white", linetype = 2, size = 1) + #Clay, No Plant
+  
   
   cleanup +
   
@@ -2567,14 +2620,17 @@ Leach.small.TMX.ppb.graph.with.ET <- ggplot(small.columns.stats, aes(Time.day, T
   
   scale_y_continuous(sec.axis = sec_axis(~. * 1, labels = NULL,
                                          
-                                         breaks = c(85)))
+                                         breaks = c(90))) +
+  
+  scale_x_continuous(breaks = c(0, 10, 20, 30))
+
 
 Leach.small.TMX.ppb.graph.with.ET
 
 
 Leach.small.TMX.ppb.graph.comb.with.ET <- grid.arrange(Leach.small.P.minus.ET.graph, Leach.small.TMX.ppb.graph.with.ET,
                                                     
-                                                    heights = c(1/4, 3/4))
+                                                    heights = c(4/11, 7/11))
 
 Leach.small.TMX.ppb.graph.comb.with.ET
 
@@ -2607,7 +2663,7 @@ Leach.tall.TMX.ppb.mass.graph.grid.with.ET <- ggplot(tall.columns.no.SS.stats.ma
   
   geom_point(aes(shape = Combo, color = Combo, size = Combo, stroke = 1.5)) +
   
-  xlab("") +
+  xlab("Volume Leached (mL)") +
   
   ylab(TMX ~ Leached ~ (mu*g)) +
   
@@ -2665,7 +2721,7 @@ Leach.tall.TMX.ppb.mass.graph.grid.with.ET <- ggplot(tall.columns.no.SS.stats.ma
         
         axis.text.x = element_text(size = 16),  ## change font size of y axis
         
-        axis.title.x = element_text(size = 16),
+        axis.title.x = element_text(size = 16,  face = "bold"),
         
         legend.margin = margin(0, 5, 10, 1, "point"), ##remove margin on legend
         
@@ -2848,7 +2904,7 @@ Leach.small.TMX.mass.graph.grid.with.ET <- ggplot(small.columns.stats.mass, aes(
   
   geom_point(aes(shape = Combo, color = Combo, size = Combo, stroke = 1.5)) +
   
-  xlab("Volume Leached (mL)") +
+  xlab("") + #"Volume Leached (mL)"
   
   ylab(TMX ~ Leached ~ (mu*g)) +
   
@@ -2961,18 +3017,18 @@ Leach.small.TMX.mass.graph.grid.with.ET
 # Leach.small.TMX.mass.graph.grid
 
 
-TMX.mass.and.conc.Leachate.grid.with.ET <- grid.arrange(Leach.tall.TMX.ppb.graph.comb.with.ET,##conc
+TMX.mass.and.conc.Leachate.grid.with.ET <- grid.arrange(Leach.small.TMX.ppb.graph.comb.with.ET,###conc 
                                                 
                                                 structure.study.TMX.ppb.graph.comb.with.ET,##conc
-                                                
-                                                Leach.small.TMX.ppb.graph.comb.with.ET,###conc                                   
-                                                
-                                                Leach.tall.TMX.ppb.mass.graph.grid.with.ET, ##mass
-                                                
-                                                structure.study.TMX.mass.graph.grid.with.ET, ##mass
+
+                                                Leach.tall.TMX.ppb.graph.comb.with.ET,##conc
                                                 
                                                 Leach.small.TMX.mass.graph.grid.with.ET, ##mass
+
+                                                structure.study.TMX.mass.graph.grid.with.ET, ##mass
                                                 
+                                                Leach.tall.TMX.ppb.mass.graph.grid.with.ET, ##mass
+
                                                 layout_matrix = rbind(c(1, 4),
                                                                       c(2, 5),
                                                                       c(3, 6)
@@ -2983,6 +3039,38 @@ TMX.mass.and.conc.Leachate.grid.with.ET
 ggsave(file = "C:/Users/Jesse/Desktop/Neonicotinoids_15/Data/Column-Study/Raw-Data-Outputs/TMX.mass.and.conc.Leachate.grid.with.ET.pdf", TMX.mass.and.conc.Leachate.grid.with.ET)
 TMX.mass.and.conc.Leachate.grid.with.ET
 dev.off()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
