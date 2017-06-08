@@ -57,11 +57,15 @@ head(Leachate_full)
 
 Leachate_full$Leach.Vol.mL[Leach.Vol.mL <= 0.3] <- 0 #### this works!
 
-Leachate_full$Leach.Vol.mL[Leach.Vol.mL == 0] <- NA   ###replace 0 with NA in volumne leachate
+#Leachate_full$Leach.Vol.mL[Leach.Vol.mL == 0] <- NA   ###replace 0 with NA in volume leachate
 
-Leachate_full$TMX_PPB[TMX_PPB == 0] <- NA   ###replace 0 with NA in leachate conc
+#Leachate_full[Leachate_full$Leach.Vol.mL == 0, Leachate_full$TMX_PPB] <- 0
 
-Leachate_full
+#Leachate_full$TMX_PPB[TMX_PPB == 0] <- NA   ###replace 0 with NA in leachate conc
+
+Leachate_full$TMX_PPB <- ifelse(Leachate_full$Leach.Vol.mL == 0, NA, Leachate_full$TMX_PPB)
+
+View(Leachate_full)
 
 
 
@@ -2053,7 +2057,7 @@ tall.columns.P.minus.ET.graph  <- ggplot(tall.columns.P.minus.ET, aes(x = time.d
   
   theme_classic() +
   
-  theme(plot.margin = unit(c(6,17,-33,54), units="points"),
+  theme(plot.margin = unit(c(6,16.5,-33,54), units="points"),
         
         # plot.title = element_text(size = 16, face = "bold", hjust = -0.5, vjust = -0.25),
         
@@ -2267,7 +2271,7 @@ structure.study.P.minus.ET.graph <- ggplot(structure.study.P.minus.ET, aes(x = t
   
   theme_classic() +
   
-  theme(plot.margin = unit(c(6,17,-33,54), units="points"),
+  theme(plot.margin = unit(c(6,16.5,-33,54), units="points"),
         
         axis.title.y = element_text(vjust = 0.3, size = 12, face = "bold", hjust = 0.5),
         
@@ -2346,7 +2350,7 @@ structure.study.TMX.ppb.graph.with.ET <- ggplot(structure.study.stats, aes(Time.
             
             position = position_dodge(width=0.9),
             
-            hjust= 2.25) +  #####add in signficance letter--adjusted for errror bars
+            hjust= 2.25, vjust = 0.1) +  #####add in signficance letter--adjusted for errror bars
   
   ##try to add a series of short line segments to make a legend for top graph
   
@@ -2468,7 +2472,7 @@ Leach.small.P.minus.ET.graph <-  ggplot(small.columns.P.minus.ET, aes(x = time.d
   
   theme_classic() +
   
-  theme(plot.margin = unit(c(6,17,-33,54), units="points"),
+  theme(plot.margin = unit(c(6,16.5,-33,54), units="points"),
         
         axis.title.y = element_text(vjust = 0.3, size = 12, face = "bold", hjust = 0.5),
         
@@ -2703,7 +2707,7 @@ Leach.tall.TMX.ppb.mass.graph.grid.with.ET <- ggplot(tall.columns.no.SS.stats.ma
             
             hjust= -2.25, vjust = 0.5, size = 6, fontface = "bold") +
   
-  annotation_custom(column.60.pic.grob, xmin = -200, xmax = 800, ymin=5, ymax=55) + ##add in column pic
+  annotation_custom(column.60.pic.grob, xmin = -200, xmax = 800, ymin=2.5, ymax=52.5) + ##add in column pic
   
   # annotation_raster(column.60.pic, ymin = 10, ymax= 50, xmin = 500,xmax = 1300) +
   
