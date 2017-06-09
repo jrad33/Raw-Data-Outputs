@@ -54,6 +54,12 @@ plant_ass$TMX.ppb.lumped <- ifelse(root.soil$Stage == "V5_Ctr", rhiz.soil$TMX.pp
                                 (root.soil$TMX.ppb + rhiz.soil$TMX.ppb)/2) ##just keep "seed soil" conc
 
 
+plant_ass$TMX.microg <- root.soil$TMX.microg + rhiz.soil$TMX.microg ###use this and just subset out 
+
+#"Ctr" (no plant) trts and make a figure/run stats
+
+
+
 ##can't do this for mass and include "ctr" treatment
 
 # plant_ass$TMX.microg.lumped <- ifelse(root.soil$Stage == "V5-Ctr", rhiz.soil$TMX.microg,
@@ -197,6 +203,79 @@ letters.plant.ass
 
 
 
+#######################################################################################################
+
+#stats on TMX mass in "plant associated" soil without "ctr" trts********
+
+plant_ass_with_plant <- plant_ass[plant_ass$Stage != "V5_Ctr",]
+
+plant_ass_with_plant
+###############################
+
+
+plant_ass_with_plant
+
+boxplot(plant_ass_with_plant$TMX.microg)# normal!
+
+hist(plant_ass_with_plant$TMX.microg) # normal!
+
+qqnorm(plant_ass_with_plant$TMX.microg) ## normal!
+
+qqline(plant_ass_with_plant$TMX.microg)## normal!
+
+plant_ass_with_plant$log.TMX.microg <- log(plant_ass_with_plant$TMX.microg) ## do log transformation anyway?
+
+hist(plant_ass_with_plant$log.TMX.microg) ## normal!
+
+qqnorm(plant_ass_with_plant$log.TMX.microg) ## normal!
+
+qqline(plant_ass_with_plant$log.TMX.microg) ## normal!
+
+
+####just use log transformed data
+
+
+
+bartlett.test(plant_ass_with_plant$log.TMX.microg ~ interaction(plant_ass_with_plant$Texture, plant_ass_with_plant$Stage))  ## 
+
+fligner.test(plant_ass_with_plant$log.TMX.microg ~ interaction(plant_ass_with_plant$Texture, plant_ass_with_plant$Stage)) ## HOV met
+
+levene.test(plant_ass_with_plant$log.TMX.microg ~ plant_ass_with_plant$Texture * plant_ass_with_plant$Stage) ##
+# 
+# boxplot(BS_top$log10.TMX ~ BS_top$Texture * BS_top$Stage, ylab = "TMX (ng g^-1)", xlab = "Trt") ##
+# 
+# interaction.plot(BS_top$Texture, BS_top$Stage, BS_top$log10.TMX) ## 
+
+ANOVA.plant.ass.with.plant <- aov(plant_ass_with_plant$log.TMX.microg ~ plant_ass_with_plant$Texture * plant_ass_with_plant$Stage)
+
+summary.plant.ass.with.plant <- summary(ANOVA.plant.ass.with.plant)
+
+summary.plant.ass.with.plant ## stage and texture sig
+
+Tukey.plant.ass.with.plant <- TukeyHSD(ANOVA.plant.ass.with.plant)
+
+Tukey.plant.ass.with.plant
+
+letters.plant.ass.with.plant <- multcompLetters4(ANOVA.plant.ass.with.plant, Tukey.plant.ass.with.plant) ## 
+
+letters.plant.ass.with.plant
+
+# $`plant_ass_with_plant$Texture`
+# Sand Clay 
+# "a"  "b" 
+# 
+# $`plant_ass_with_plant$Stage`
+# V1   V3   V5 
+# "a" "ab"  "b" 
+# 
+# $`plant_ass_with_plant$Texture:plant_ass_with_plant$Stage`
+# Sand:V1 Sand:V3 Clay:V3 Sand:V5 Clay:V1 Clay:V5 
+# "a"    "ab"    "ab"    "ab"     "b"     "b" 
+
+
+
+
+#################################
 
 
 
@@ -541,6 +620,26 @@ plant_ass.TMX.ppb.lumped
 plant_ass.TMX.ppb.lumped$letters <- c("ab", "bc", "e", "de", "a", "b", "e", "cd")
 
 plant_ass.TMX.ppb.lumped
+
+
+
+###plant ass... with plant
+
+plant_ass_with_plant
+
+plant_ass_with_plant.TMX.microg.lumped <- summarySE(plant_ass_with_plant, measurevar = "TMX.microg", groupvars = c("Texture", "Stage"))
+
+plant_ass_with_plant.TMX.microg.lumped
+
+letters.plant.ass.with.plant
+
+plant_ass_with_plant.TMX.microg.lumped
+
+plant_ass_with_plant.TMX.microg.lumped$letters <- c("b", "ab", "b", "a", "ab", "ab")
+
+plant_ass_with_plant.TMX.microg.lumped
+
+
   
 ##################################################################################################### 
   
@@ -654,11 +753,106 @@ plant.ass
 dev.off()
 
 
+#############plant ass.with plant
 
 
 
+plant.ass.with.plant <- ggplot(plant_ass_with_plant.TMX.microg.lumped, aes(Texture, TMX.microg, fill = Stage)) +
+  
+  geom_bar(position = position_dodge(), stat = "identity") +
+  
+  geom_bar(position = "dodge", stat = "identity", color="black", show.legend =FALSE, lwd = 0.75) + ##add outline to bars
+  
+  geom_errorbar(aes(ymin = TMX.microg, ymax = TMX.microg + se),      ##error bars
+                
+                width = 0.2, position = position_dodge(0.9), lwd = 0.75) +
+  
+  cleanup +                                          #cleanup
+  
+  scale_fill_manual(name = "",
+                    
+                    labels = c("V1", "V3", "V5"), 
+                    
+                    values = c("blue", "red", "green")) +
+  
+  xlab("") +
+  
+  ylab(expression(TMX ~ (mu * g))) + ### pain in the ass way to express superscripts
+  
+  theme(axis.text.y = element_text(size = 16),  ## change font size of y axis
+        
+        axis.title = element_text(size = 16, face = "bold")) +
+  
+  #geom_label(aes(label = letters)) +
+  
+  #geom_text(aes(label = letters)) +
+  
+  geom_text(aes(label = letters, y = TMX.microg + se, fontface = "italic"), position = position_dodge(width=0.9), vjust= -0.5) +  #####add in signficance letter--adjusted for errror bars
+  
+  theme(axis.text.x = element_text(size = 16),  ## change font size of y axis
+        
+        axis.title = element_text(size = 16, face = "bold")) +
+  
+  theme(axis.line.x = element_line(size = 1), ##change axis line size
+        
+        axis.line.y = element_line(size = 1),
+        
+        panel.border = element_rect(color = "black", fill = NA, size = 1.75), ##add border
+        
+        legend.position = c(0.2, 0.8), ## move legend
+        
+        legend.margin = margin(0, 0, 0, 0, "mm"), ##remove margin on legend
+        
+        legend.text = element_text( size = 16), ##legend text
+        
+        #legend.background = element_rect(color = "black", size = 1), ## add legend border
+        
+        #legend.key.height=unit(1,"line"), 
+        
+        #legend.key.width=unit(1,"line")
+        
+        legend.key = element_rect(color = "black", size = 0.75), ## put line around legend key
+        
+        legend.direction = "vertical", 
+        
+        axis.ticks.y = element_line(size = 1, color = "black"),  ##enlargen ticks--problem at op right corner
+        
+        legend.key.size = unit(7, 'mm'),
+        
+        legend.key.height = unit(7, "mm"), 
+        
+        plot.margin = unit(c(1.5, 1,1.5,-1.5),"mm"),
+        
+        axis.title.y = element_text(vjust = -1)) +
+  
+  #plot.title = element_text( Size = 18)) +
+  
+  #guides(guide_legend(nrow=4)) +
+  
+  #legend.spacing.y = unit(1, "mm") +
+  
+  #legend.key.size = unit(1, "line")) 
+  
+  #scale_fill_manual(values=values, labels=setNames(paste(labels, " "), entries)) +
+  
+ggtitle("TMX in Plant-Associated Soil") +
+  
+  theme(plot.title = element_text(size = 16, face = "bold", hjust = 0.5, vjust = 1)) + ## added title and adjusted
+  
+  #scale_y_continuous(expand = c(0,0), limit = c(0, 110)) + scale_x_discrete(expand = c(0.03,0)) ### removed excess space btw bars and axis
+  
+  scale_y_continuous(expand = c(0,0), limit = c(0, 500)) +
+  
+  scale_x_discrete(expand = c(0.03,0)) ### removed excess space btw bars and axis
 
 
+
+plant.ass.with.plant
+
+
+pdf("C:/Users/Jesse/Desktop/Neonicotinoids_15/Data/Column-Study/Raw-Data-Outputs/plant.associated.soil.with.plant.only.pdf")
+plant.ass.with.plant
+dev.off()
 
 
 

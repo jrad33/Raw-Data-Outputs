@@ -2432,12 +2432,12 @@ BS.combo <- grid.arrange(bar.top2, bar.middle2, bar.bottom2, bar.top.mass2,
              
              bar.middle.mass2, bar.bottom.mass2, ncol = 3)
 BS.combo
-
-ggsave(file = "C:/Users/Jesse/Desktop/Neonicotinoids_15/Data/Column-Study/Raw-Data-Outputs/BS.combo.pdf",
-       
-       BS.combo)
-dev.off()
-
+# 
+# ggsave(file = "C:/Users/Jesse/Desktop/Neonicotinoids_15/Data/Column-Study/Raw-Data-Outputs/BS.combo.pdf",
+#        
+#        BS.combo)
+# dev.off()
+# 
 
 
 
@@ -2904,11 +2904,11 @@ bar.bottom3
 BS.universal.BD <- grid.arrange(bar.top3, bar.middle3, bar.bottom3, ncol = 3)
 
 BS.universal.BD 
-
-ggsave(file = "C:/Users/Jesse/Desktop/Neonicotinoids_15/Data/Column-Study/Raw-Data-Outputs/BS.universal.BD.pdf",
-       
-       BS.universal.BD )
-dev.off()
+# 
+# ggsave(file = "C:/Users/Jesse/Desktop/Neonicotinoids_15/Data/Column-Study/Raw-Data-Outputs/BS.universal.BD.pdf",
+#        
+#        BS.universal.BD )
+# dev.off()
 
 
 
@@ -3200,12 +3200,12 @@ BS.mass.Universal.BD <- grid.arrange(bar.top.mass.Universal.BD, bar.middle.mass.
                                      bar.bottom.mass.Universal.BD, ncol = 3)
 
 BS.mass.Universal.BD
-
-ggsave(file = "C:/Users/Jesse/Desktop/Neonicotinoids_15/Data/Column-Study/Raw-Data-Outputs/BS.mass.Universal.BD.pdf",
-       
-       BS.mass.Universal.BD)
-dev.off()
-
+# 
+# ggsave(file = "C:/Users/Jesse/Desktop/Neonicotinoids_15/Data/Column-Study/Raw-Data-Outputs/BS.mass.Universal.BD.pdf",
+#        
+#        BS.mass.Universal.BD)
+# dev.off()
+# 
 
 
 
@@ -3295,7 +3295,7 @@ bar.top.mass3 <- ggplot(BS_TMX.mass.top.bar, aes(Texture, TMX.micrg, fill = Stag
   
   #scale_fill_manual(values=values, labels=setNames(paste(labels, " "), entries)) +
   
-ggtitle("d)") +
+ggtitle("a) Bulk Soil, 0-30 cm") +
   
   theme(plot.title = element_text(size = 16, face = "bold", vjust = 1)) + ## added title and adjusted
   
@@ -3381,7 +3381,7 @@ bar.middle.mass3 <- ggplot(BS_TMX.mass.middle.bar, aes(Texture, TMX.micrg, fill 
   
   #scale_fill_manual(values=values, labels=setNames(paste(labels, " "), entries)) +
   
-ggtitle("e)") + annotate("text", x = 1.5, y= 380, label = "*** 1/4 scale in 0-30 cm section") +
+ggtitle("b)  Bulk Soil, 30-45 cm") + annotate("text", x = 1.5, y= 380, label = "*** 1/4 scale in 0-30 cm section") +
   
   theme(plot.title = element_text(size = 16, face = "bold", vjust = 1)) + ## added title and adjusted
   
@@ -3468,7 +3468,7 @@ bar.bottom.mass3 <- ggplot(BS_TMX.mass.bottom.bar, aes(Texture, TMX.micrg, fill 
   
   #scale_fill_manual(values=values, labels=setNames(paste(labels, " "), entries)) +
   
-ggtitle("f)") + annotate("text", x = 1.5, y= 380, label = "*** 1/4 scale in 0-30 cm section") +
+ggtitle("c)  Bulk Soil, 45-60 cm") + annotate("text", x = 1.5, y= 380, label = "*** 1/4 scale in 0-30 cm section") +
   
   theme(plot.title = element_text(size = 16, face = "bold", vjust = 1)) + ## added title and adjusted
   
@@ -3478,6 +3478,14 @@ ggtitle("f)") + annotate("text", x = 1.5, y= 380, label = "*** 1/4 scale in 0-30
 
 bar.bottom.mass3
 
+
+BS.TMX.mass.OG <- grid.arrange(bar.top.mass3, bar.middle.mass3, bar.bottom.mass3, ncol = 3)
+
+
+ggsave(file = "C:/Users/Jesse/Desktop/Neonicotinoids_15/Data/Column-Study/Raw-Data-Outputs/BS.TMX.mass.OG.pdf",
+       
+       BS.TMX.mass.OG)
+dev.off()
 
 
 
@@ -3774,7 +3782,7 @@ bar.bottom3
 
 
 
-######now throw together in grid
+######now throw TMX.ppb together in grid
 
 
 
@@ -3782,11 +3790,22 @@ bar.bottom3
 BS.TMX.ppb <- grid.arrange(bar.top4, bar.middle4, bar.bottom4, ncol = 3)
 
 BS.TMX.ppb 
+# 
+# ggsave(file = "C:/Users/Jesse/Desktop/Neonicotinoids_15/Data/Column-Study/Raw-Data-Outputs/BS.TMX.ppb .pdf",
+#        
+#        BS.TMX.ppb  )
+# dev.off()
+# 
 
-ggsave(file = "C:/Users/Jesse/Desktop/Neonicotinoids_15/Data/Column-Study/Raw-Data-Outputs/BS.TMX.ppb .pdf",
-       
-       BS.TMX.ppb  )
-dev.off()
+
+
+
+
+
+
+
+
+
 
 
 
