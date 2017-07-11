@@ -14,7 +14,7 @@ library(lawstat)
 
 ##JBR
 ##5/16/17
-###Estimating ET for Column Experiment
+###Estimating ET for Column Experiment... and analyzing leachate/TMX transport
 
 
 
@@ -2228,10 +2228,10 @@ Leach.tall.TMX.ppb.graph.comb.with.ET
 
 
 Leach.tall.TMX.ppb.graph.with.ET
-pdf("C:/Users/Jesse/Desktop/Neonicotinoids_15/Data/Column-Study/Raw-Data-Outputs/Leach.tall.TMX.ppb.graph.with.ET.pdf")
+#pdf("C:/Users/Jesse/Desktop/Neonicotinoids_15/Data/Column-Study/Raw-Data-Outputs/Leach.tall.TMX.ppb.graph.with.ET.pdf")
 dev.off()
 
-ggsave(file = "C:/Users/Jesse/Desktop/Neonicotinoids_15/Data/Column-Study/Raw-Data-Outputs/Leach.tall.TMX.ppb.graph.comb.with.ET.pdf", Leach.tall.TMX.ppb.graph.comb.with.ET)
+#ggsave(file = "C:/Users/Jesse/Desktop/Neonicotinoids_15/Data/Column-Study/Raw-Data-Outputs/Leach.tall.TMX.ppb.graph.comb.with.ET.pdf", Leach.tall.TMX.ppb.graph.comb.with.ET)
 
 
 #########work on structure study
@@ -2424,10 +2424,10 @@ structure.study.TMX.ppb.graph.comb.with.ET
 
 
 structure.study.TMX.ppb.graph.with.ET
-pdf("C:/Users/Jesse/Desktop/Neonicotinoids_15/Data/Column-Study/Raw-Data-Outputs/structure.study.TMX.ppb.graph.with.ET.pdf")
+#pdf("C:/Users/Jesse/Desktop/Neonicotinoids_15/Data/Column-Study/Raw-Data-Outputs/structure.study.TMX.ppb.graph.with.ET.pdf")
 dev.off()
 
-ggsave(file = "C:/Users/Jesse/Desktop/Neonicotinoids_15/Data/Column-Study/Raw-Data-Outputs/structure.study.TMX.ppb.graph.comb.with.ET.pdf", structure.study.TMX.ppb.graph.comb.with.ET)
+#ggsave(file = "C:/Users/Jesse/Desktop/Neonicotinoids_15/Data/Column-Study/Raw-Data-Outputs/structure.study.TMX.ppb.graph.comb.with.ET.pdf", structure.study.TMX.ppb.graph.comb.with.ET)
 
 
 
@@ -2642,7 +2642,7 @@ Leach.small.TMX.ppb.graph.with.ET
 pdf("C:/Users/Jesse/Desktop/Neonicotinoids_15/Data/Column-Study/Raw-Data-Outputs/Leach.small.TMX.ppb.graph.with.ET.pdf")
 dev.off()
 
-ggsave(file = "C:/Users/Jesse/Desktop/Neonicotinoids_15/Data/Column-Study/Raw-Data-Outputs/Leach.small.TMX.ppb.graph.comb.with.ET.pdf", Leach.small.TMX.ppb.graph.comb.with.ET)
+#ggsave(file = "C:/Users/Jesse/Desktop/Neonicotinoids_15/Data/Column-Study/Raw-Data-Outputs/Leach.small.TMX.ppb.graph.comb.with.ET.pdf", Leach.small.TMX.ppb.graph.comb.with.ET)
 
 
 #####################now TMX mass to be combined with P-ET figures
@@ -3040,7 +3040,7 @@ TMX.mass.and.conc.Leachate.grid.with.ET <- grid.arrange(Leach.small.TMX.ppb.grap
 
 TMX.mass.and.conc.Leachate.grid.with.ET
 
-ggsave(file = "C:/Users/Jesse/Desktop/Neonicotinoids_15/Data/Column-Study/Raw-Data-Outputs/TMX.mass.and.conc.Leachate.grid.with.ET.pdf", TMX.mass.and.conc.Leachate.grid.with.ET)
+#ggsave(file = "C:/Users/Jesse/Desktop/Neonicotinoids_15/Data/Column-Study/Raw-Data-Outputs/TMX.mass.and.conc.Leachate.grid.with.ET.pdf", TMX.mass.and.conc.Leachate.grid.with.ET)
 TMX.mass.and.conc.Leachate.grid.with.ET
 dev.off()
 
